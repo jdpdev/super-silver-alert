@@ -1,0 +1,8 @@
+{
+  "name": "environment",
+  "version": "0.0.1",
+  "dependencies": {
+    "phaser": "^2.4.8",
+    "systemjs": "^0.19.31"
+  }
+}
