@@ -9,8 +9,8 @@
     "experimentalDecorators": true,
     "removeComments": true,
     "noImplicitAny": false,
-    "outDir": "build/dev",
-    "rootDir": "src"
+    "outDir": "./build/dev/js",
+    "rootDir": "./src"
   },
   "exclude": [
     "lib",
