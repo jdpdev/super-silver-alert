@@ -1,8 +1,8 @@
 {
-  "name": "environment",
+  "name": "endless-corridors",
   "version": "0.0.1",
   "dependencies": {
-    "phaser": "^2.4.8",
+    "phaser": "^2.5.0",
     "systemjs": "^0.19.31"
   },
   "devDependencies": {
