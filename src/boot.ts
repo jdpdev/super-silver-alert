@@ -1,4 +1,4 @@
-/// <reference path="../lib/phaser.d.ts"/>
+/// <reference path="../node_modules/phaser/typescript/phaser.d.ts"/>
 
 import {Preloader} from "./preloader";
 import {GameManager} from "./states/game-manager";
