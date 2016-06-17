@@ -6,6 +6,21 @@ export class LinkedList<T extends ILinkable> {
 	get first(): T { return this._first; }
 	get last(): T { return this._last; }
 
+	get length(): number {
+		var count = 0;
+		var iterator = this._first;
+
+		if (iterator == null) {
+			return 0;
+		}
+
+		do {
+			count++;
+		} while (iterator = <T>iterator.next);
+
+		return count;
+	}
+
 	add(add:T) {
 		if (this._last) {
 			this._last.next = add;

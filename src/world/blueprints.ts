@@ -1,20 +1,4 @@
-/**
- * The master layout of the building, with all of its corridors.
- */
-export class Blueprint {
-    
-    private _corridors: Corrdior[] = [];
-    
-    /**
-     * Create a new corridor instance
-     */
-    createCorridor(): Corridor {
-        var corridor = new Corridor();
-        this._corridors.push(corridor);
-        
-        return corridor;
-    }
-}
+import {LinkedList, ILinkable} from "../util/linked-list";
 
 /**
  * A corridor is a single screen, that is, a section of the building that is 
@@ -22,5 +6,98 @@ export class Blueprint {
  * descriptions of chunks.
  */
 export class Corridor {
-    private _chunks: any[] = [];
+    private _chunks: LinkedList<EssentialChunk>;
+    private static _highId: number = 0;
+
+    get id(): number { return this._id; }
+    get first(): EssentialChunk { return this._chunks.first; }
+
+    constructor(private _id: number) {
+        this._chunks = new LinkedList<EssentialChunk>();
+    }
+
+    createChunk(data:any): EssentialChunk {
+        var def = new EssentialChunk(this.getNextId(), data);
+        this._chunks.add(def);
+
+        return def;
+    }
+
+    private getNextId(): number {
+        return Corridor._highId++;
+    }
+
+    /**
+     * Get the nth chunk in the corridor
+     * @param  {number}         n The index of the chunk to get
+     * @return {EssentialChunk}   The chunk
+     */
+    getChunkInOrder(n: number): EssentialChunk {
+        if (n < 0 || n >= this._chunks.length) {
+            return null;
+        }
+
+        var i = 0;
+        var iterator = this._chunks.first;
+
+        do {
+            if (i == n) {
+                return iterator;
+            }
+
+            i++;
+        } while (iterator = <EssentialChunk>iterator.next)
+    }
+}
+
+/**
+ * The master layout of the building, with all of its corridors.
+ */
+export class Blueprint {
+    
+    private _corridors: Corridor[] = [];
+    private _highId: number = 0;
+    
+    /**
+     * Create a new corridor instance
+     */
+    createCorridor(): Corridor {
+        var corridor = new Corridor(this.getNextId());
+        this._corridors.push(corridor);
+        
+        return corridor;
+    }
+
+    getCorridor(id: number): Corridor {
+        for (var i = 0; i < this._corridors.length; i++) {
+            if (this._corridors[i].id == id) {
+                return this._corridors[i];
+            }
+        }
+
+        return null;
+    }
+
+    private getNextId(): number {
+        return this._highId++;
+    }
+}
+
+export class EssentialChunk implements ILinkable {
+
+    private _next: ILinkable = null;
+    private _prev: ILinkable = null;
+
+    get next(): ILinkable { return this._next; }
+    set next(value: ILinkable) { this._next = value; }
+
+    get previous(): ILinkable { return this._prev; }
+    set previous(value: ILinkable) { this._prev = value; }
+
+    get id(): number { return this._id; }
+    get data(): any { return this._data; }
+
+    constructor(private _id: number, private _data:any = null) {
+        
+    }
 }
