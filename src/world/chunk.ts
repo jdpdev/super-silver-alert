@@ -1,49 +1,25 @@
 import {ILinkable} from "../util/linked-list"
+import {WorldObject} from "./world-object"
 
-export abstract class Chunk implements ILinkable {
-
-	protected _container: Phaser.Group = null;
+export abstract class Chunk extends WorldObject implements ILinkable {
 
 	// Chunk chain (linked list of live chunks)
 	protected _previous: Chunk = null;
 	protected _next: Chunk = null;
 
-	constructor(protected _game: Phaser.Game, parent:PIXI.DisplayObjectContainer, protected _data: any) {
-		this._container = _game.add.group(parent);
+	constructor(_game: Phaser.Game, _parent:PIXI.DisplayObjectContainer, protected _data: any) {
+		super(_game, _parent);
 	}
 
-	get bounds():PIXI.Rectangle {
-		return this._container.getBounds();
-	}
-
-	get x(): number {
-		return this._container.x;
-	}
-
-	get y(): number {
-		return this._container.y;
-	}
-
-	/**
-	 * Sets the position of the chunk relative to its parent.
-	 * @param {number} x X-position
-	 * @param {number} y Y-position
-	 */
-	setPosition(x:number, y:number) {
-		this._container.x = x;
-		this._container.y = y;
-	}
-
-	/**
-	 * Remove the chunk from display
-	 */
 	remove() {
-		this._container.destroy(true);
+		super.remove();
+
+		this._previous.next = this._next;
+		this._next.previous = this._previous;
+
 		this._previous = null;
 		this._next = null;
 	}
-
-	abstract draw();
 
 // ***************************************************************************************************************
 // 	Linking Chunks
