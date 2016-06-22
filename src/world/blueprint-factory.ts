@@ -52,6 +52,7 @@ export class BlueprintFactory {
 		for (var i = 0; i < 12; i++) {
 			var data:any = {
 				biome: 0,
+				color: 0xc700c7,
 				connect: {
 					up: null,
 					down: null,
@@ -143,6 +144,7 @@ export class BlueprintFactory {
 		for (var i = 0; i < 4; i++) {
 			data = {
 				biome: 2,
+				color: 0x00c7c7,
 				connect: {
 					up: null,
 					down: null,
@@ -158,6 +160,7 @@ export class BlueprintFactory {
 		for (var i = 0; i < 4; i++) {
 			data = {
 				biome: 3,
+				color: 0xc7c700,
 				connect: {
 					up: null,
 					down: null,
@@ -173,6 +176,7 @@ export class BlueprintFactory {
 		for (var i = 0; i < 4; i++) {
 			data = {
 				biome: 4,
+				color: 0xc7c7c7,
 				connect: {
 					up: null,
 					down: null,

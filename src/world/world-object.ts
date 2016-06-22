@@ -1,7 +1,7 @@
 export abstract class WorldObject {
 	protected _container: Phaser.Group = null;
 
-	constructor(protected _game: Phaser.Game, protected _parent: PIXI.DisplayObjectContainer) {
+	constructor(protected _game: Phaser.Game, protected _parent: Phaser.Group) {
 		this._container = _game.add.group(_parent);
 	}
 

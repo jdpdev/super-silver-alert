@@ -2,7 +2,7 @@ import {Chunk} from "../chunk"
 
 export class CorridorChunk extends Chunk {
 
-	static _wallColor: number = 0xf5e8d6;
+	static _wallColor: number = 0xdee7f3; //0xf5e8d6;
 	static _doorFrameColor: number = 0xF5F5DC;
 	static _metalColor: number = 0xd3d3d3;
 
@@ -11,6 +11,8 @@ export class CorridorChunk extends Chunk {
 	private _floor: Phaser.Graphics = null;
 
 	draw() {
+		this._width = 400;
+
 		this.drawCeiling();
 
 		if (this._data.connect.down) {
@@ -29,12 +31,60 @@ export class CorridorChunk extends Chunk {
 			this.drawWall();
 		}
 
+		// Cap left side
 		if (this._previous == null) {
 			this.drawLeftCap();
 
 			if (this._data.connect.left) {
 				this.drawLeftCapDoor();
 			}
+
+			this._leftLimitX = 50;
+			this._rightLimitX = 500;
+		} 
+
+		// Cap right side
+		else if (this._next == null) {
+			this._leftLimitX = -100;
+			this._rightLimitX = 350;
+		} 
+
+		// No cap
+		else {
+			this._leftLimitX = -100;
+			this._rightLimitX = 500;
+		}
+	}
+
+	protected isInUpConnection(x: number): boolean {
+		if (this._data.connect.up) {
+			return 100 <= x && x <= 300;
+		} else {
+			return false;
+		}
+	}
+
+	protected isInDownConnection(x: number): boolean {
+		if (this._data.connect.down) {
+			return 100 <= x && x <= 300;
+		} else {
+			return false;
+		}
+	}
+
+	protected isInLeftConnection(x: number): boolean {
+		if (this._data.connect.left) {
+			return x <= this._leftLimitX + 50;
+		} else {
+			return false;
+		}
+	}
+
+	protected isInRightConnection(x: number): boolean {
+		if (this._data.connect.right) {
+			return x >= this._rightLimitX - 50;
+		} else {
+			return false;
 		}
 	}
 
@@ -46,6 +96,7 @@ export class CorridorChunk extends Chunk {
 
 		this._backWall.beginFill(<number>this._data.color);
 		this._backWall.drawRect(0, 150, 400, 25);
+		this._backWall.drawRect(0, 0, 2, 200);
 		this._backWall.endFill();
 	}
 

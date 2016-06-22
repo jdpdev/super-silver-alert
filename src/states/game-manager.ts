@@ -4,16 +4,23 @@ import {ChunkFactory} from "../world/chunk-factory";
 import {Chunk} from "../world/chunk";
 import {LinkedList} from "../util/linked-list";
 
+import {Actor} from "../world/actor";
+import {Player} from "../world/actors/player";
+import {PlayerController} from "../input/player-controller";
+
 export class GameManager extends Phaser.State {
 
 	private _blueprint: Blueprint;
 
 	private _chunkFactory: ChunkFactory = null;
 
+	private _chunkLayer: Phaser.Group;
+	private _pcLayer: Phaser.Group;
+
 	private _chunks: LinkedList<Chunk> = new LinkedList<Chunk>();
 
-	private _leftKey: Phaser.Key = null;
-	private _rightKey: Phaser.Key = null;
+	/** @type {Actor} The player */
+	private _pc: Actor = null;
 
 	constructor() {
 		super();
@@ -28,18 +35,25 @@ export class GameManager extends Phaser.State {
 	}
 
 	create() {
-		this._chunkFactory = new ChunkFactory(this.game);
 		this.game.stage.backgroundColor = 0x373a37;
+		this.game.renderer.renderSession.roundPixels = true;
 
-		this._leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
-		this._rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+		this._chunkLayer = new Phaser.Group(this.game, this.world);
+		this._pcLayer = new Phaser.Group(this.game, this.world);
+
+		this._chunkFactory = new ChunkFactory(this.game);
+
+		this._pc = new Player(this.game, this._pcLayer, this);
+		this._pc.setController(new PlayerController(this, this.game.input));
 
 		var start = this._blueprint.getCorridor(1);
 		this.loadCorridor(start, start.getChunkInOrder(4).id);
 	}
 
 	update() {
-		var scroll = 0;
+		this._pc.update(this.game.time.elapsed / 1000);
+
+		/*var scroll = 0;
 
 		if (this._leftKey.isDown) {
 			scroll = -1;
@@ -52,7 +66,7 @@ export class GameManager extends Phaser.State {
 		}
 
 		scroll = (this.game.time.elapsed / 1000) * 150 * scroll;
-		this.camera.x += scroll;
+		this.camera.x += scroll;*/
 	}
 
 	protected clearWorld() {
@@ -66,6 +80,26 @@ export class GameManager extends Phaser.State {
 
 			this._chunks = new LinkedList<Chunk>();
 		}
+	}
+
+	/**
+	 * Teleport to a chunk
+	 * @param {number} chunkId The id of the chunk to teleport to
+	 */
+	teleportToChunk(chunkId: number) {
+		
+		// Special case, level exit
+		if (chunkId == -1) {
+			return;
+		}
+
+		var corridor = this._blueprint.findChunkCorridor(chunkId);
+
+		if (corridor == null) {
+			return;
+		}
+
+		this.loadCorridor(corridor, chunkId);
 	}
 
 	/**
@@ -85,9 +119,15 @@ export class GameManager extends Phaser.State {
 		var cameraPos: number = 0;
 
 		do {
-			chunk = this._chunkFactory.build(desc.data, this.world);
-			
+			chunk = this._chunkFactory.build(desc.id, desc.data, this._chunkLayer);
 			this._chunks.add(chunk);
+		} while (desc = <EssentialChunk>desc.next);
+
+		// Need to draw and position after connections are made
+		chunk = this._chunks.first
+		lastChunk = null;
+
+		do {
 			chunk.draw();
 
 			if (lastChunk) {
@@ -96,51 +136,38 @@ export class GameManager extends Phaser.State {
 				chunk.setPosition(0, 0);
 			}
 
-			if (desc.id == chunkId) {
+			if (chunk.id == chunkId) {
 				cameraPos = chunk.x + (chunk.bounds.width / 2) - (this.world.camera.width / 2);
 			}
 
 			lastChunk = chunk;
-		} while (desc = <EssentialChunk>desc.next);
+		} while (chunk = chunk.next);
 
-		this.world.camera.x = cameraPos;
+		//this.world.camera.x = cameraPos;
+		
+		this._pc.setPosition(cameraPos, 420);
+		this._pc.setCameraFocus(this.world.camera);
 	}
 
 	/**
-	 * Rebuild the chunks, starting with a specific chunk
-	 * @param {any} home The description of the chunk to start with
+	 * Return the chunk a position is contained in
+	 * @param  {number} x The x location of the world
+	 * @return {Chunk}    The colliding chunk
 	 */
-	protected rebuildChunks(home: any) {
+	getLocationChunk(x: number): Chunk {
+		var chunk = this._chunks.first;
 
-		// Remove existing
-		this.clearWorld();
+		if (!chunk) {
+			return null;
+		}
 
-		// Start building from the home chunk
-		var chunk = this._chunkFactory.build(0xffe7e7, this.world);
-		chunk.setPosition(0, 0);
-		this._chunks.add(chunk);
+		do {
+			if (chunk.x <= x && x <= chunk.x + chunk.width) {
+				return chunk;
+			}
 
-		var lastChunk = chunk;
-		var nextChunk = this._chunkFactory.build(0xccb7b7, this.world);
-		nextChunk.setPosition(lastChunk.x + lastChunk.bounds.width, 0);
-		this._chunks.addAfter(nextChunk, lastChunk);
+		} while (chunk = chunk.next);
 
-		lastChunk = nextChunk;
-		nextChunk = this._chunkFactory.build(0x998787, this.world);
-		nextChunk.setPosition(lastChunk.x + lastChunk.bounds.width, 0);
-		this._chunks.addAfter(nextChunk, lastChunk);
-
-		lastChunk = chunk;
-		nextChunk = this._chunkFactory.build(0xccb7b7, this.world);
-		nextChunk.setPosition(lastChunk.x - nextChunk.bounds.width, 0);
-		this._chunks.addBefore(nextChunk, lastChunk);
-
-		lastChunk = nextChunk;
-		nextChunk = this._chunkFactory.build(0x998787, this.world);
-		nextChunk.setPosition(lastChunk.x - nextChunk.bounds.width, 0);
-		this._chunks.addBefore(nextChunk, lastChunk);
-
-		this.world.camera.x = -200; //this.world.camera.width / 2 - chunk.bounds.width / 2;
-		this.world.camera.y = 0;
+		return null;
 	}
 }

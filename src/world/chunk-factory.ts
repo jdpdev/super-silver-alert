@@ -11,7 +11,7 @@ export class ChunkFactory {
 	 * Instantiate a new chunk
 	 * @return {Chunk} The new chunk
 	 */
-	build(data:any, parent:PIXI.DisplayObjectContainer):Chunk {
+	build(id:number, data:any, parent:Phaser.Group):Chunk {
 		switch (data.biome) {
 			
 			// Reception
@@ -21,7 +21,7 @@ export class ChunkFactory {
 			// Corridor
 			case 1:
 			default:
-				return new CorridorChunk(this._game, parent, data);
+				return new CorridorChunk(this._game, parent, id, data);
 
 			// Patio
 			case 2:

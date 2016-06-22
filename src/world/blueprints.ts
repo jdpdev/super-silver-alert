@@ -48,6 +48,23 @@ export class Corridor {
             i++;
         } while (iterator = <EssentialChunk>iterator.next)
     }
+
+    /**
+     * Returns if the given chunk belongs to this corridor
+     * @param  {number}  id The chunk id
+     * @return {boolean}    [description]
+     */
+    hasChunk(id: number): boolean {
+        var chunk = this._chunks.first;
+
+        do {
+            if (chunk.id == id) {
+                return true;
+            }
+        } while (chunk = <EssentialChunk>chunk.next);
+
+        return false;
+    }
 }
 
 /**
@@ -71,6 +88,21 @@ export class Blueprint {
     getCorridor(id: number): Corridor {
         for (var i = 0; i < this._corridors.length; i++) {
             if (this._corridors[i].id == id) {
+                return this._corridors[i];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Return the corridor that the given chunk id belongs to
+     * @param  {number}   id The chunk id
+     * @return {Corridor}    The parent corridor
+     */
+    findChunkCorridor(id: number): Corridor {
+        for (var i = 0; i < this._corridors.length; i++) {
+            if (this._corridors[i].hasChunk(id)) {
                 return this._corridors[i];
             }
         }
