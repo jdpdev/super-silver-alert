@@ -16,7 +16,7 @@ export class Player extends Actor {
 	 */
 	translate(dx: number, dy: number): Chunk {
 		var chunk = super.translate(dx, dy);
-		this._connections = chunk.hasConnection(this.x);
+		this._connections = chunk.getConnections(this.x);
 
 		return chunk;
 	}

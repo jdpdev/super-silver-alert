@@ -117,6 +117,7 @@ export class GameManager extends Phaser.State {
 		var chunk: Chunk;
 		var lastChunk: Chunk;
 		var cameraPos: number = 0;
+		this.clearWorld();
 
 		do {
 			chunk = this._chunkFactory.build(desc.id, desc.data, this._chunkLayer);

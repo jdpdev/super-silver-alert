@@ -15,8 +15,8 @@ export class ChunkFactory {
 		switch (data.biome) {
 			
 			// Reception
-			case 0:
-				break;
+			/*case 0:
+				break;*/
 
 			// Corridor
 			case 1:
@@ -24,7 +24,7 @@ export class ChunkFactory {
 				return new CorridorChunk(this._game, parent, id, data);
 
 			// Patio
-			case 2:
+			/*case 2:
 				break;
 
 			// Nurse
@@ -33,7 +33,7 @@ export class ChunkFactory {
 
 			// Common area
 			case 4:
-				break;
+				break;*/
 		}
 	}
 }

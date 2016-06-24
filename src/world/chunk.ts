@@ -25,8 +25,13 @@ export abstract class Chunk extends WorldObject implements ILinkable {
 	remove() {
 		super.remove();
 
-		this._previous.next = this._next;
-		this._next.previous = this._previous;
+		if (this._previous) {
+			this._previous.next = this._next;
+		}
+
+		if (this._next) {
+			this._next.previous = this._previous;
+		}
 
 		this._previous = null;
 		this._next = null;
@@ -46,26 +51,26 @@ export abstract class Chunk extends WorldObject implements ILinkable {
 	 * Returns if a horizontal position is a warp zone, and to what
 	 * @param {number} x The horizontal position
 	 */
-	hasConnection(x: number): ChunkConnections {
+	getConnections(x: number): ChunkConnections {
 		var dirs = {up: null, down: null, left: null, right: null};
 
 		x -= this.x;
 
 		if (this._data.connect) {
-			if (this._data.connect.left) {
-				dirs.left = this.isInLeftConnection(x);
+			if (this._data.connect.left && this.isInLeftConnection(x)) {
+				dirs.left = this._data.connect.left.id;
 			}
 
-			if (this._data.connect.right) {
-				dirs.right = this.isInRightConnection(x);
+			if (this._data.connect.right && this.isInRightConnection(x)) {
+				dirs.right = this._data.connect.right.id;
 			}
 
-			if (this._data.connect.up) {
-				dirs.up = this.isInUpConnection(x);
+			if (this._data.connect.up && this.isInUpConnection(x)) {
+				dirs.up = this._data.connect.up.id;
 			}
 
-			if (this._data.connect.down) {
-				dirs.down = this.isInDownConnection(x);
+			if (this._data.connect.down && this.isInDownConnection(x)) {
+				dirs.down = this._data.connect.down.id;
 			}
 		}
 
