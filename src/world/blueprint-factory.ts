@@ -76,7 +76,7 @@ export class BlueprintFactory {
 		}
 
 		// ...Corridor B
-		for (var i = 0; i < 7; i++) {
+		for (var i = 0; i < 8; i++) {
 			data = {
 				biome: 1,
 				color: 0x0000c7,
@@ -88,7 +88,7 @@ export class BlueprintFactory {
 				}
 			};
 
-			if (i == 6) {
+			if (i == 7) {
 				data.connect.right = -1;
 			}
 

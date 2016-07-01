@@ -27,13 +27,13 @@ export class PlayerController extends Controller {
 	 */
 	update(delta: number) {
 
-		if (this._transitionLockout) {
-			if (this._leftKey.repeats == 0 && this._rightKey.repeats == 0 && this._upKey.repeats == 0 && this._downKey.repeats == 0) {
+		/*if (this._transitionLockout) {
+			if (this._leftKey.duration == 0 && this._rightKey.duration == 0 && this._upKey.duration == 0 && this._downKey.duration == 0) {
 				this._transitionLockout = false;
 			} else {
 				return;
 			}
-		}
+		}*/
 
 		// Check for zone transition
 		// TODO Require holding the button for some time
@@ -41,23 +41,25 @@ export class PlayerController extends Controller {
 
 		if (connections) {
 			if (connections.left && this._leftKey.isDown) {
-				this._state.teleportToChunk(connections.left);
+				connections.left.performAction();
 				this._transitionLockout = true;
 				return;
 			} else if (connections.right && this._rightKey.isDown) {
-				this._state.teleportToChunk(connections.right);
+				connections.right.performAction();
 				this._transitionLockout = true;
 				return;
 			} else if (connections.up && this._upKey.isDown) {
-				this._state.teleportToChunk(connections.up);
+				connections.up.performAction();
 				this._transitionLockout = true;
 				return;
 			} else if (connections.down && this._downKey.isDown) {
-				this._state.teleportToChunk(connections.down);
+				connections.down.performAction();
 				this._transitionLockout = true;
 				return;
 			}
 		}
+
+		//console.log("left >> " + this._leftKey.isDown + "; right >> " + this._rightKey.isDown);
 
 		// Move
 		var direction = 0;

@@ -3,10 +3,10 @@ import {Chunk, ChunkConnections} from "../chunk";
 
 export class Player extends Actor {
 
-	protected _connections: ChunkConnections;
+	protected _actions: ChunkConnections;
 
 	get connections(): ChunkConnections {
-		return this._connections;
+		return this._actions;
 	}
 
 	/**
@@ -16,7 +16,7 @@ export class Player extends Actor {
 	 */
 	translate(dx: number, dy: number): Chunk {
 		var chunk = super.translate(dx, dy);
-		this._connections = chunk.getConnections(this.x);
+		this._actions = chunk.getActions(this.x);
 
 		return chunk;
 	}
@@ -26,6 +26,6 @@ export class Player extends Actor {
 	 * @return {number} [description]
 	 */
 	getLocationConnections() {
-		this._connections = this.getLocationChunk(this.x).getConnections(this.x);
+		this._actions = this.getLocationChunk(this.x).getActions(this.x);
 	}
 }

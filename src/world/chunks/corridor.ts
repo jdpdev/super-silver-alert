@@ -46,6 +46,12 @@ export class CorridorChunk extends Chunk {
 
 		// Cap right side
 		else if (this._next == null) {
+			this.drawRightCap();
+
+			if (this._data.connect.right) {
+				this.drawRightCapDoor();
+			}
+
 			this._leftLimitX = -100;
 			this._rightLimitX = 350;
 		} 
@@ -293,6 +299,32 @@ export class CorridorChunk extends Chunk {
 		this.drawLeftSign();
 	}
 
+	protected drawRightCap() {
+		this._backWall.beginFill(CorridorChunk._wallColor);
+		this._backWall.drawPolygon(
+			[
+				new Phaser.Point(400, -50),
+				new Phaser.Point(400, 240),
+				new Phaser.Point(370, 200),
+				new Phaser.Point(370, 0)
+			]
+		);
+		this._backWall.endFill();
+
+		this._backWall.beginFill(<number>this._data.color);
+		this._backWall.drawPolygon(
+			[
+				new Phaser.Point(400, 140),
+				new Phaser.Point(400, 190),
+				new Phaser.Point(370, 175),
+				new Phaser.Point(370, 150)
+			]
+		);
+		this._backWall.endFill();
+
+		this.drawRightSign();
+	}
+
 	protected drawLeftCapDoor() {
 		// doorframe
 		this._backWall.beginFill(CorridorChunk._doorFrameColor);
@@ -315,6 +347,33 @@ export class CorridorChunk extends Chunk {
 				new Phaser.Point(8, 229),
 				new Phaser.Point(22, 210),
 				new Phaser.Point(22, 53)
+			]
+		);
+		this._backWall.endFill();
+	}
+
+	protected drawRightCapDoor() {
+		// doorframe
+		this._backWall.beginFill(CorridorChunk._doorFrameColor);
+
+		this._backWall.drawPolygon(
+			[
+				new Phaser.Point(395, 30),
+				new Phaser.Point(395, 230),
+				new Phaser.Point(375, 210),
+				new Phaser.Point(375, 50)
+			]
+		);
+		this._backWall.endFill();
+
+		// doors
+		this._backWall.beginFill(0xd3a15f);
+		this._backWall.drawPolygon(
+			[
+				new Phaser.Point(392, 38),
+				new Phaser.Point(392, 229),
+				new Phaser.Point(378, 210),
+				new Phaser.Point(378, 53)
 			]
 		);
 		this._backWall.endFill();

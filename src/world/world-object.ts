@@ -1,8 +1,20 @@
+import {GameManager} from "../states/game-manager"
+
 export abstract class WorldObject {
 	protected _container: Phaser.Group = null;
 
 	constructor(protected _game: Phaser.Game, protected _parent: Phaser.Group) {
 		this._container = _game.add.group(_parent);
+	}
+
+	get manager():GameManager {
+		var state = this._game.state.getCurrentState();
+
+		if (state instanceof GameManager) {
+			return <GameManager>state;
+		} else {
+			return null;
+		}
 	}
 
 	/**

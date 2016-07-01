@@ -1,7 +1,9 @@
 import {ILinkable} from "../util/linked-list"
 import {WorldObject} from "./world-object"
+import {Action} from "../actions/action"
+import {Teleport} from "../actions/teleport"
 
-export type ChunkConnections = { up: number, down: number, left: number, right: number };
+export type ChunkConnections = { up: Action, down: Action, left: Action, right: Action };
 
 export abstract class Chunk extends WorldObject implements ILinkable {
 
@@ -48,29 +50,30 @@ export abstract class Chunk extends WorldObject implements ILinkable {
 	}
 
 	/**
-	 * Returns if a horizontal position is a warp zone, and to what
+	 * Returns the actions available from the chunk at a given position
 	 * @param {number} x The horizontal position
 	 */
-	getConnections(x: number): ChunkConnections {
+	getActions(x: number): ChunkConnections {
 		var dirs = {up: null, down: null, left: null, right: null};
 
 		x -= this.x;
 
+		// teleport actions
 		if (this._data.connect) {
 			if (this._data.connect.left && this.isInLeftConnection(x)) {
-				dirs.left = this._data.connect.left.id;
+				dirs.left = new Teleport(this.manager, "Walk", this._data.connect.left.id);
 			}
 
 			if (this._data.connect.right && this.isInRightConnection(x)) {
-				dirs.right = this._data.connect.right.id;
+				dirs.right = new Teleport(this.manager, "Walk", this._data.connect.right.id);
 			}
 
 			if (this._data.connect.up && this.isInUpConnection(x)) {
-				dirs.up = this._data.connect.up.id;
+				dirs.up = new Teleport(this.manager, "Walk", this._data.connect.up.id);
 			}
 
 			if (this._data.connect.down && this.isInDownConnection(x)) {
-				dirs.down = this._data.connect.down.id;
+				dirs.down = new Teleport(this.manager, "Walk", this._data.connect.down.id);
 			}
 		}
 
