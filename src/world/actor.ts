@@ -31,7 +31,7 @@ export class Actor extends WorldObject {
 	 */
 	translate(dx: number, dy: number): Chunk {
 		var nextX = this._container.x + dx;
-		var chunk = this._state.getLocationChunk(nextX);
+		var chunk = this.getLocationChunk(nextX);
 
 		if (chunk == null) {
 			return;
@@ -44,6 +44,10 @@ export class Actor extends WorldObject {
 		this._container.y += dy;
 
 		return chunk;
+	}
+
+	getLocationChunk(x: number): Chunk {
+		return this._state.getLocationChunk(x);
 	}
 
 	draw() {

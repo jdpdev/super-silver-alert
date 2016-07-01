@@ -78,6 +78,8 @@ export class GameManager extends Phaser.State {
 				chunk.remove();
 			} while (chunk = chunk.next);
 
+			this._chunkLayer.removeAll(true);
+
 			this._chunks = new LinkedList<Chunk>();
 		}
 	}
@@ -87,6 +89,8 @@ export class GameManager extends Phaser.State {
 	 * @param {number} chunkId The id of the chunk to teleport to
 	 */
 	teleportToChunk(chunkId: number) {
+
+		console.log("teleportToChunk >> " + chunkId);
 		
 		// Special case, level exit
 		if (chunkId == -1) {
@@ -116,7 +120,7 @@ export class GameManager extends Phaser.State {
 
 		var chunk: Chunk;
 		var lastChunk: Chunk;
-		var cameraPos: number = 0;
+		var spawnPos: number = 0;
 		this.clearWorld();
 
 		do {
@@ -138,16 +142,17 @@ export class GameManager extends Phaser.State {
 			}
 
 			if (chunk.id == chunkId) {
-				cameraPos = chunk.x + (chunk.bounds.width / 2) - (this.world.camera.width / 2);
+				spawnPos = chunk.x + (chunk.bounds.width / 2);
 			}
 
 			lastChunk = chunk;
 		} while (chunk = chunk.next);
 
-		//this.world.camera.x = cameraPos;
+		//this.world.camera.x = spawnPos;
 		
-		this._pc.setPosition(cameraPos, 420);
+		this._pc.setPosition(spawnPos, 420);
 		this._pc.setCameraFocus(this.world.camera);
+		(<Player>this._pc).getLocationConnections();
 	}
 
 	/**
@@ -170,5 +175,14 @@ export class GameManager extends Phaser.State {
 		} while (chunk = chunk.next);
 
 		return null;
+	}
+
+	/**
+	 * Return the corridor that a given chunk id belongs to
+	 * @param  {number}   id The id of the chunk
+	 * @return {Corridor}    The parent corridor
+	 */
+	getChunkCorridor(id: number): Corridor {
+		return this._blueprint.findChunkCorridor(id);
 	}
 }

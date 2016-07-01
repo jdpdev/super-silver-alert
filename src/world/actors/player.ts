@@ -20,4 +20,12 @@ export class Player extends Actor {
 
 		return chunk;
 	}
+
+	/**
+	 * Set the chunk connections for the current location
+	 * @return {number} [description]
+	 */
+	getLocationConnections() {
+		this._connections = this.getLocationChunk(this.x).getConnections(this.x);
+	}
 }

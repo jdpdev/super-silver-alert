@@ -39,13 +39,13 @@ export class BlueprintFactory {
 			G is a common area
 		 */
 		
-		var A = blueprint.createCorridor();
-		var B = blueprint.createCorridor();
-		var C = blueprint.createCorridor();
-		var D = blueprint.createCorridor();
-		var E = blueprint.createCorridor();
-		var F = blueprint.createCorridor();
-		var G = blueprint.createCorridor();
+		var A = blueprint.createCorridor("Reception");
+		var B = blueprint.createCorridor("West Wing");
+		var C = blueprint.createCorridor("Main Wing");
+		var D = blueprint.createCorridor("Atrium");
+		var E = blueprint.createCorridor("Nursing");
+		var F = blueprint.createCorridor("East Wing");
+		var G = blueprint.createCorridor("Dining");
 
 		// Populate
 		// ...Reception area

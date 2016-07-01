@@ -41,7 +41,7 @@ export abstract class WorldObject {
 	 * Remove the object from display
 	 */
 	remove() {
-		this._container.destroy(true);
+		this._container.destroy(true, false);
 	}
 
 	abstract draw();

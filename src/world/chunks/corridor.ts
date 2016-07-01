@@ -1,4 +1,5 @@
 import {Chunk} from "../chunk"
+import {GameManager} from "../../states/game-manager"
 
 export class CorridorChunk extends Chunk {
 
@@ -118,6 +119,9 @@ export class CorridorChunk extends Chunk {
 		this._backWall.beginFill(0x785221);
 		this._backWall.drawRect(198, 60, 4, 140);
 		this._backWall.endFill();
+
+		// Connection sign
+		this.drawUpSign();
 	}
 
 	protected drawOutdoorDoorWall() {
@@ -137,6 +141,51 @@ export class CorridorChunk extends Chunk {
 		this._backWall.drawRect(120, 70, 70, 120);
 		this._backWall.drawRect(210, 70, 70, 120);
 		this._backWall.endFill();
+
+		// Connection sign
+		this.drawUpSign();
+	}
+
+	protected drawUpSign() {
+		if (!this._data.connect.up) {
+			return;
+		}
+
+		var corridor = (<GameManager>this._game.state.getCurrentState()).getChunkCorridor(this._data.connect.up.id);
+		
+		if (!corridor) {
+			return;
+		}
+
+		this._game.add.text(320, 285, corridor.name, {fontSize: 16, backgroundColor: "#f7f7f7", fill: "#000000"}, this._container);
+	}
+
+	protected drawLeftSign() {
+		if (!this._data.connect.left) {
+			return;
+		}
+
+		var corridor = (<GameManager>this._game.state.getCurrentState()).getChunkCorridor(this._data.connect.left.id);
+		
+		if (!corridor) {
+			return;
+		}
+
+		this._game.add.text(60, 285, corridor.name, {fontSize: 16, backgroundColor: "#f7f7f7", fill: "#000000"}, this._container);
+	}
+
+	protected drawRightSign() {
+		if (!this._data.connect.right) {
+			return;
+		}
+
+		var corridor = (<GameManager>this._game.state.getCurrentState()).getChunkCorridor(this._data.connect.right.id);
+		
+		if (!corridor) {
+			return;
+		}
+
+		this._game.add.text(280, 285, corridor.name, {fontSize: 16, backgroundColor: "#f7f7f7", fill: "#000000"}, this._container);
 	}
 
 	protected drawCeiling() {
@@ -226,6 +275,8 @@ export class CorridorChunk extends Chunk {
 			]
 		);
 		this._backWall.endFill();
+
+		this.drawLeftSign();
 	}
 
 	protected drawLeftCapDoor() {

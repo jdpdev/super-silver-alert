@@ -10,9 +10,10 @@ export class Corridor {
     private static _highId: number = 0;
 
     get id(): number { return this._id; }
+    get name(): string { return this._name; }
     get first(): EssentialChunk { return this._chunks.first; }
 
-    constructor(private _id: number) {
+    constructor(private _id: number, private _name: string) {
         this._chunks = new LinkedList<EssentialChunk>();
     }
 
@@ -78,8 +79,8 @@ export class Blueprint {
     /**
      * Create a new corridor instance
      */
-    createCorridor(): Corridor {
-        var corridor = new Corridor(this.getNextId());
+    createCorridor(name:string): Corridor {
+        var corridor = new Corridor(this.getNextId(), name);
         this._corridors.push(corridor);
         
         return corridor;
@@ -131,5 +132,24 @@ export class EssentialChunk implements ILinkable {
 
     constructor(private _id: number, private _data:any = null) {
         
+    }
+
+    /**
+     * Returns if the chunk has an external exit
+     * @return {boolean} Whether chunk has an external exit
+     */
+    hasExit(): boolean {
+        if (this._data == null) {
+            return false;
+        }
+
+        if (!this._data.connect) {
+            return false;
+        }
+
+        return this._data.connect.up == -1 ||
+                this._data.connect.down == -1 ||
+                this._data.connect.left == -1 ||
+                this._data.connect.right == -1;
     }
 }
