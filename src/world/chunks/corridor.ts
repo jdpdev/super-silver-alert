@@ -23,7 +23,7 @@ export class CorridorChunk extends Chunk {
 		}
 
 		if (this._data.connect.up) {
-			if (this._data.connect.up.data.biome == 2) {
+			if (this._data.connect.up == -1 || this._data.connect.up.data.biome == 2) {
 				this.drawOutdoorDoorWall();
 			} else {
 				this.drawCorridorDoorWall();
@@ -151,13 +151,18 @@ export class CorridorChunk extends Chunk {
 			return;
 		}
 
-		var corridor = (<GameManager>this._game.state.getCurrentState()).getChunkCorridor(this._data.connect.up.id);
-		
-		if (!corridor) {
-			return;
-		}
+		// Exit sign
+		if (this._data.connect.up == -1) {
+			this._game.add.text(150, 210, "EXIT", {fontSize: 16, backgroundColor: "#202020", fill: "#ff0000", "boundsAlignH": "center"}, this._container);
+		} else {
+			var corridor = (<GameManager>this._game.state.getCurrentState()).getChunkCorridor(this._data.connect.up.id);
+			
+			if (!corridor) {
+				return;
+			}
 
-		this._game.add.text(320, 285, corridor.name, {fontSize: 16, backgroundColor: "#f7f7f7", fill: "#000000"}, this._container);
+			this._game.add.text(320, 285, corridor.name, {fontSize: 16, backgroundColor: "#f7f7f7", fill: "#000000"}, this._container);
+		}
 	}
 
 	protected drawLeftSign() {
@@ -165,13 +170,17 @@ export class CorridorChunk extends Chunk {
 			return;
 		}
 
-		var corridor = (<GameManager>this._game.state.getCurrentState()).getChunkCorridor(this._data.connect.left.id);
-		
-		if (!corridor) {
-			return;
-		}
+		if (this._data.connect.left == -1) {
+			this._game.add.text(60, 210, "EXIT", {fontSize: 16, backgroundColor: "#202020", fill: "#ff0000", "boundsAlignH": "center"}, this._container);
+		} else {
+			var corridor = (<GameManager>this._game.state.getCurrentState()).getChunkCorridor(this._data.connect.left.id);
+			
+			if (!corridor) {
+				return;
+			}
 
-		this._game.add.text(60, 285, corridor.name, {fontSize: 16, backgroundColor: "#f7f7f7", fill: "#000000"}, this._container);
+			this._game.add.text(60, 285, corridor.name, {fontSize: 16, backgroundColor: "#f7f7f7", fill: "#000000"}, this._container);
+		}
 	}
 
 	protected drawRightSign() {
@@ -179,13 +188,18 @@ export class CorridorChunk extends Chunk {
 			return;
 		}
 
-		var corridor = (<GameManager>this._game.state.getCurrentState()).getChunkCorridor(this._data.connect.right.id);
-		
-		if (!corridor) {
-			return;
-		}
+		// Exit sign
+		if (this._data.connect.right == -1) {
+			this._game.add.text(280, 210, "EXIT", {fontSize: 16, backgroundColor: "#202020", fill: "#ff0000", "boundsAlignH": "center"}, this._container);
+		} else {
+			var corridor = (<GameManager>this._game.state.getCurrentState()).getChunkCorridor(this._data.connect.right.id);
+			
+			if (!corridor) {
+				return;
+			}
 
-		this._game.add.text(280, 285, corridor.name, {fontSize: 16, backgroundColor: "#f7f7f7", fill: "#000000"}, this._container);
+			this._game.add.text(280, 285, corridor.name, {fontSize: 16, backgroundColor: "#f7f7f7", fill: "#000000"}, this._container);
+		}
 	}
 
 	protected drawCeiling() {
