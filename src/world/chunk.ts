@@ -61,19 +61,19 @@ export abstract class Chunk extends WorldObject implements ILinkable {
 		// teleport actions
 		if (this._data.connect) {
 			if (this._data.connect.left && this.isInLeftConnection(x)) {
-				dirs.left = new Teleport(this.manager, "Walk", this._data.connect.left.id);
+				dirs.left = new Teleport(this.manager, "Walk", this._data.connect.left >= 0 ? this._data.connect.left.id : -1);
 			}
 
 			if (this._data.connect.right && this.isInRightConnection(x)) {
-				dirs.right = new Teleport(this.manager, "Walk", this._data.connect.right.id);
+				dirs.right = new Teleport(this.manager, "Walk", this._data.connect.right >= 0 ? this._data.connect.right.id : -1);
 			}
 
 			if (this._data.connect.up && this.isInUpConnection(x)) {
-				dirs.up = new Teleport(this.manager, "Walk", this._data.connect.up.id);
+				dirs.up = new Teleport(this.manager, "Walk", this._data.connect.up >= 0 ? this._data.connect.up.id : -1);
 			}
 
 			if (this._data.connect.down && this.isInDownConnection(x)) {
-				dirs.down = new Teleport(this.manager, "Walk", this._data.connect.down.id);
+				dirs.down = new Teleport(this.manager, "Walk", this._data.connect.down >= 0 ? this._data.connect.down.id : -1);
 			}
 		}
 

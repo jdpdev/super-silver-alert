@@ -90,7 +90,7 @@ export class GameManager extends Phaser.State {
 	 */
 	teleportToChunk(chunkId: number) {
 
-		console.log("teleportToChunk >> " + chunkId);
+		//console.log("teleportToChunk >> " + chunkId);
 		
 		// Special case, level exit
 		if (chunkId == -1) {
