@@ -133,6 +133,7 @@ export class GameManager extends Phaser.State {
 		lastChunk = null;
 
 		do {
+			chunk.initialize();
 			chunk.draw();
 
 			if (lastChunk) {

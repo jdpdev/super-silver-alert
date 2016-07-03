@@ -55,7 +55,7 @@ export class Actor extends WorldObject {
 
 		this._graphics.beginFill(0xffaaaa);
 		this._graphics.drawRect(-30, -40, 60, 40);
-		this._graphics.drawRect(-40, -60, 50, 30);
+		this._graphics.drawRect(-30, -60, 50, 30);
 		this._graphics.endFill();
 
 		this._sprite = this._game.add.sprite(-30, -60, null, null, this._container);

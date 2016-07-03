@@ -11,9 +11,45 @@ export class CorridorChunk extends Chunk {
 	private _ceiling: Phaser.Graphics = null;
 	private _floor: Phaser.Graphics = null;
 
-	draw() {
+	initialize() {
 		this._width = 400;
 
+		// Cap left side
+		if (this._previous == null) {
+			this._leftLimitX = 50;
+			this._rightLimitX = 500;
+		} 
+
+		// Cap right side
+		else if (this._next == null) {
+			this._leftLimitX = -100;
+			this._rightLimitX = 350;
+		} 
+
+		// No cap
+		else {
+			this._leftLimitX = -100;
+			this._rightLimitX = 500;
+		}
+
+		if (this._data.connect.up) {
+			this.addWalkConnection(100, 300, "up", this._data.connect.up != -1 ? this._data.connect.up.id : -1);
+		}
+
+		if (this._data.connect.down) {
+			this.addWalkConnection(100, 300, "down", this._data.connect.down != -1 ? this._data.connect.down.id : -1);
+		}
+
+		if (this._data.connect.left) {
+			this.addWalkConnection(0, this._leftLimitX + 50, "left", this._data.connect.left != -1 ? this._data.connect.left.id : -1);
+		}
+
+		if (this._data.connect.right) {
+			this.addWalkConnection(this._rightLimitX - 50, this._width, "right", this._data.connect.right != -1 ? this._data.connect.right.id : -1);
+		}
+	}
+
+	draw() {
 		this.drawCeiling();
 
 		if (this._data.connect.down) {
@@ -39,9 +75,6 @@ export class CorridorChunk extends Chunk {
 			if (this._data.connect.left) {
 				this.drawLeftCapDoor();
 			}
-
-			this._leftLimitX = 50;
-			this._rightLimitX = 500;
 		} 
 
 		// Cap right side
@@ -51,15 +84,6 @@ export class CorridorChunk extends Chunk {
 			if (this._data.connect.right) {
 				this.drawRightCapDoor();
 			}
-
-			this._leftLimitX = -100;
-			this._rightLimitX = 350;
-		} 
-
-		// No cap
-		else {
-			this._leftLimitX = -100;
-			this._rightLimitX = 500;
 		}
 	}
 

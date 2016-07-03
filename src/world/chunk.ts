@@ -1,11 +1,15 @@
 import {ILinkable} from "../util/linked-list"
 import {WorldObject} from "./world-object"
+import {Item} from "./items/item"
 import {Action} from "../actions/action"
 import {Teleport} from "../actions/teleport"
+import {GameManager} from "../states/game-manager"
 
 export type ChunkConnections = { up: Action, down: Action, left: Action, right: Action };
 
 export abstract class Chunk extends WorldObject implements ILinkable {
+
+	protected _manager: GameManager = null;
 
 	// Chunk chain (linked list of live chunks)
 	protected _previous: Chunk = null;
@@ -16,13 +20,22 @@ export abstract class Chunk extends WorldObject implements ILinkable {
 
 	protected _width: number = 0;
 
+	/** @type {Item[]} Items within the chunk */
+	protected _items: Item[] = [];
+
+	protected _actions: Action[] = [];
+
 	constructor(_game: Phaser.Game, _parent: Phaser.Group, protected _id: number, protected _data: any) {
 		super(_game, _parent);
+
+		this._manager = <GameManager>_game.state.getCurrentState();
 	}
 
 	get id(): number { return this._id; }
 
 	get width(): number { return this._width; }
+
+	initialize() { }
 
 	remove() {
 		super.remove();
@@ -37,6 +50,10 @@ export abstract class Chunk extends WorldObject implements ILinkable {
 
 		this._previous = null;
 		this._next = null;
+	}
+
+	addAction(action: Action) {
+		this._actions.push(action);
 	}
 
 	/**
@@ -59,7 +76,7 @@ export abstract class Chunk extends WorldObject implements ILinkable {
 		x -= this.x;
 
 		// teleport actions
-		if (this._data.connect) {
+		/*if (this._data.connect) {
 			if (this._data.connect.left && this.isInLeftConnection(x)) {
 				dirs.left = new Teleport(this.manager, "Walk", this._data.connect.left >= 0 ? this._data.connect.left.id : -1);
 			}
@@ -75,9 +92,25 @@ export abstract class Chunk extends WorldObject implements ILinkable {
 			if (this._data.connect.down && this.isInDownConnection(x)) {
 				dirs.down = new Teleport(this.manager, "Walk", this._data.connect.down >= 0 ? this._data.connect.down.id : -1);
 			}
+		}*/
+
+		for (var i = 0; i < this._actions.length; i++) {
+			if (this._actions[i].checkBounds(x)) {
+				if (!dirs[this._actions[i].direction] || dirs[this._actions[i].direction].z < this._actions[i].z) {
+					dirs[this._actions[i].direction] = this._actions[i];
+				}
+			}
 		}
 
 		return dirs;
+	}
+
+	protected addWalkConnection(xLeft:number, xRight: number, direction: string, chunkId: number) {
+		var action = new Teleport(this._manager, "Walk", chunkId);
+		action.setBounds(xLeft, xRight);
+		action.direction = direction;
+
+		this._actions.push(action);
 	}
 
 	protected isInUpConnection(x: number): boolean {
