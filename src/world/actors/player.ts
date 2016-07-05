@@ -107,6 +107,8 @@ export class Player extends Actor {
 		var chunk = super.translate(dx, dy);
 		this._actions = chunk.getActions(this.x);
 
+		this._container.scale = new Phaser.Point(dx > 0 ? -1 : 1, 1);
+
 		return chunk;
 	}
 
