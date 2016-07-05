@@ -51,17 +51,7 @@ export class Actor extends WorldObject {
 	}
 
 	draw() {
-		this._graphics = this._game.add.graphics(0, 0, this._game.world);
-
-		this._graphics.beginFill(0xffaaaa);
-		this._graphics.drawRect(-30, -40, 60, 40);
-		this._graphics.drawRect(-30, -60, 50, 30);
-		this._graphics.endFill();
-
-		this._sprite = this._game.add.sprite(-30, -60, null, null, this._container);
-		this._sprite.texture = this._graphics.generateTexture();
-
-		this._game.world.remove(this._graphics, true);
+		
 	}
 
 	setController(controller: Controller) {
