@@ -1,13 +1,13 @@
 import {GameManager} from "../states/game-manager";
 
-export class Action {
+export abstract class Action {
 
 	protected _xLeft:number = 0;
 	protected _xRight:number = 0;
 	protected _direction: string = null;
 	protected _z: number = 0;
 
-	constructor(protected _manager:GameManager) {
+	constructor(protected _manager:GameManager, protected _label: string) {
 
 	}
 
@@ -30,7 +30,7 @@ export class Action {
 	}
 
 	get label(): string {
-		return "Action";
+		return this._label;
 	}
 	
 	set direction(value: string) {

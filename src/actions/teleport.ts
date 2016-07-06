@@ -3,8 +3,8 @@ import {Action} from "./action"
 
 export class Teleport extends Action {
 
-	constructor(manager: GameManager, private _label: string, private _id: number) {
-		super(manager);
+	constructor(manager: GameManager, label: string, private _id: number) {
+		super(manager, label);
 	}
 
 	/**
