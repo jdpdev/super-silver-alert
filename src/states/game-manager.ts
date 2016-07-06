@@ -6,13 +6,18 @@ import {LinkedList} from "../util/linked-list";
 
 import {Actor} from "../world/actor";
 import {Player} from "../world/actors/player";
+import {Grandpa} from "../world/actors/grandpa";
 import {PlayerController} from "../input/player-controller";
+
+import {TextureManager} from "../content/texture-manager";
 
 export class GameManager extends Phaser.State {
 
 	private _blueprint: Blueprint;
 
 	private _chunkFactory: ChunkFactory = null;
+
+	private _textureManager: TextureManager = null;
 
 	private _chunkLayer: Phaser.Group;
 	private _pcLayer: Phaser.Group;
@@ -42,8 +47,9 @@ export class GameManager extends Phaser.State {
 		this._pcLayer = new Phaser.Group(this.game, this.world);
 
 		this._chunkFactory = new ChunkFactory(this.game);
+		this._textureManager = new TextureManager(this);
 
-		this._pc = new Player(this.game, this._pcLayer, this);
+		this._pc = new Grandpa(this.game, this._pcLayer, this);
 		this._pc.setController(new PlayerController(this, this.game.input));
 
 		var start = this._blueprint.getCorridor(1);
@@ -67,6 +73,10 @@ export class GameManager extends Phaser.State {
 
 		scroll = (this.game.time.elapsed / 1000) * 150 * scroll;
 		this.camera.x += scroll;*/
+	}
+
+	getTexture(name: string): PIXI.RenderTexture {
+		return this._textureManager.getTexture(name);
 	}
 
 	protected clearWorld() {
