@@ -7,25 +7,34 @@ import {LinkedList} from "../util/linked-list";
 import {Actor} from "../world/actor";
 import {Player} from "../world/actors/player";
 import {Grandpa} from "../world/actors/grandpa";
+import {Nurse} from "../world/actors/nurse";
 import {PlayerController} from "../input/player-controller";
 
 import {TextureManager} from "../content/texture-manager";
+import {GameTime, GameDate} from "../util/game-time";
 
 export class GameManager extends Phaser.State {
 
 	private _blueprint: Blueprint;
 
 	private _chunkFactory: ChunkFactory = null;
-
 	private _textureManager: TextureManager = null;
+	private _gameTime: GameTime = null;
 
 	private _chunkLayer: Phaser.Group;
 	private _pcLayer: Phaser.Group;
+	private _frontLayer: Phaser.Group;
 
 	private _chunks: LinkedList<Chunk> = new LinkedList<Chunk>();
 
 	/** @type {Actor} The player */
 	private _pc: Actor = null;
+
+	private _nurse: Actor = null;
+
+	get gameDate() {
+		return this._gameTime.date;
+	}
 
 	constructor() {
 		super();
@@ -43,8 +52,18 @@ export class GameManager extends Phaser.State {
 		this.game.stage.backgroundColor = 0x373a37;
 		this.game.renderer.renderSession.roundPixels = true;
 
+		// Set game time
+		this._gameTime = new GameTime(this, 600);
+		var now = this._gameTime.date;
+		now.advanceTo(9, 0);
+		this._gameTime.advanceToDate(now);
+
 		this._chunkLayer = new Phaser.Group(this.game, this.world);
 		this._pcLayer = new Phaser.Group(this.game, this.world);
+		this._frontLayer = new Phaser.Group(this.game, this.world);
+
+		this._pcLayer.y = 10;
+		this._frontLayer.y = 15;
 
 		this._chunkFactory = new ChunkFactory(this.game);
 		this._textureManager = new TextureManager(this);
@@ -52,27 +71,17 @@ export class GameManager extends Phaser.State {
 		this._pc = new Grandpa(this.game, this._pcLayer, this);
 		this._pc.setController(new PlayerController(this, this.game.input));
 
+		this._nurse = new Nurse(this.game, this._frontLayer, this);
+
 		var start = this._blueprint.getCorridor(1);
 		this.loadCorridor(start, start.getChunkInOrder(4).id);
 	}
 
 	update() {
-		this._pc.update(this.game.time.elapsed / 1000);
-
-		/*var scroll = 0;
-
-		if (this._leftKey.isDown) {
-			scroll = -1;
-		} else if (this._rightKey.isDown) {
-			scroll = 1;
-		}
-
-		if (scroll == 0) {
-			return;
-		}
-
-		scroll = (this.game.time.elapsed / 1000) * 150 * scroll;
-		this.camera.x += scroll;*/
+		var delta = this.game.time.elapsed / 1000;
+		
+		this._gameTime.update(delta);
+		this._pc.update(delta);
 	}
 
 	getTexture(name: string): PIXI.RenderTexture {
@@ -164,6 +173,8 @@ export class GameManager extends Phaser.State {
 		this._pc.setPosition(spawnPos, 420);
 		this._pc.setCameraFocus(this.world.camera);
 		(<Player>this._pc).getLocationConnections();
+
+		this._nurse.setPosition(spawnPos, 420);
 	}
 
 	/**

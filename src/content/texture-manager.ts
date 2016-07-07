@@ -8,8 +8,11 @@ export class TextureManager {
 
 	getTexture(name:string): PIXI.RenderTexture {
 		switch (name) {
-			case "value":
+			case "nurse":
 				return this.drawNurse();
+
+			case "nurse-foot":
+				return this.drawNurseFoot();
 
 			case "grandpa":
 				return this.drawGrandpa();
@@ -82,8 +85,8 @@ export class TextureManager {
 		var graphics = this._game.add.graphics(0, 0, this._game.world);
 
 		graphics.beginFill(0x303030);
-		graphics.drawRect(-20, 0, 10, 5);
-		graphics.drawRect(-25, 5, 15, 5);
+		graphics.drawRect(5, 0, 10, 5);
+		graphics.drawRect(0, 5, 15, 5);
 		graphics.endFill();
 
 		var texture = graphics.generateTexture();
@@ -92,6 +95,59 @@ export class TextureManager {
 	}
 
 	private drawNurse(): PIXI.RenderTexture {
-		return null;
+		var graphics = this._game.add.graphics(0, 0, this._game.world);
+
+		// shadow
+		graphics.beginFill(0x000000, 0.4);
+		graphics.drawRect(-5, 115, 50, 12);
+		graphics.endFill();
+
+		// Body
+		graphics.beginFill(0xffb7c5);
+		graphics.drawRect(0, 0, 40, 100);
+		graphics.endFill();
+
+		// hair
+		graphics.beginFill(0x622419);
+		graphics.drawRect(0, -35, 35, 10);
+		graphics.endFill();
+
+		// head
+		graphics.beginFill(0xfbdcbd);
+		graphics.drawRect(0, -30, 30, 40);
+		graphics.endFill();
+
+		graphics.beginFill(0x622419);
+		graphics.drawRect(25, -35, 10, 30);
+		graphics.endFill();
+
+		// ...eyes
+		graphics.beginFill(0xffffff);
+		graphics.drawRect(5, -15, 7, 5);
+		graphics.drawRect(15, -15, 7, 5);
+		graphics.endFill();
+
+		graphics.beginFill(0x87ceeb);
+		graphics.drawRect(5, -15, 4, 5);
+		graphics.drawRect(15, -15, 4, 5);
+		graphics.endFill();
+
+		var texture = graphics.generateTexture();
+		this._game.world.remove(graphics, true);
+
+		return texture;
+	}
+
+	private drawNurseFoot(): PIXI.RenderTexture {
+		var graphics = this._game.add.graphics(0, 0, this._game.world);
+
+		graphics.beginFill(0x303030);
+		graphics.drawRect(5, 0, 10, 18);
+		graphics.drawRect(0, 18, 15, 5);
+		graphics.endFill();
+
+		var texture = graphics.generateTexture();
+		this._game.world.remove(graphics, true);
+		return texture;
 	}
 }
