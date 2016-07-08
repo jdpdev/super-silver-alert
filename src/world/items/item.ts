@@ -1,20 +1,47 @@
-import {WorldObject} from "../world-object"
 import {Action} from "../../actions/action"
 
-export class Item extends WorldObject {
+/**
+ * Specification of an item
+ */
+export class Item {
 
-	/** @type {number} Size of the area the item can be picked up from */
-	protected _collisionWidth: number = 0;
+	protected _id: number = 0;
 
-	constructor(game: Phaser.Game, parent: Phaser.Group, data: any) {
-		super(game, parent);
+	/** @type {Action[]} Actions that can be performed on the item */
+	protected _actions:Action[] = [];
+
+	protected _worldTextureId: string = null;
+	protected _invTexutreId: string = null;
+
+	/** @type {number} Horizontal range from the center the item can be picked up from */
+	protected _pickupDist: number = 20;
+
+	/** @type {number} Horizontal range from the center the item can be picked up from */
+	get pickupDistance(): number {
+		return this._pickupDist;
 	}
 
-	draw() {
-
+	get actions(): Action[] {
+		return this._actions;
 	}
 
-	getActions(x: number): Action[] {
-		return null;
+	get worldTexture(): string {
+		return this._worldTextureId;
+	}
+
+	constructor(data:any) {
+		this._id = data.id;
+
+		if (data.actions) {
+
+		}
+
+		if (data.worldTexture) {
+			this._worldTextureId = data.worldTexture;
+		}
+
+		if (data.invTexture) {
+			this._invTextureId = data.invTexture;
+		}
 	}
 }

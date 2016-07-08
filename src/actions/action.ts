@@ -7,6 +7,13 @@ export abstract class Action {
 	protected _direction: string = null;
 	protected _z: number = 0;
 
+	/** @type {boolean} Whether the action happens in the world (true) or in the inventory (false) */
+	protected _isWorldAction: boolean = true;
+
+	get isWorldAction(): boolean {
+		return this._isWorldAction;
+	}
+
 	constructor(protected _manager:GameManager, protected _label: string) {
 
 	}

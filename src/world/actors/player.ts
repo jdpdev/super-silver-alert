@@ -1,9 +1,20 @@
 import {Actor} from "../actor";
+import {Inventory} from "../items/inventory";
 import {Chunk, ChunkConnections} from "../chunk";
 
 export class Player extends Actor {
 
 	protected _actions: ChunkConnections;
+
+	protected _inventory: Inventory = null;
+
+	get inventory(): Inventory {
+		if (this._inventory == null) {
+			this._inventory = new Inventory();
+		}
+
+		return this._inventory;
+	}
 
 	get connections(): ChunkConnections {
 		return this._actions;

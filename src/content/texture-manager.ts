@@ -19,6 +19,12 @@ export class TextureManager {
 
 			case "grandpa-foot":
 				return this.drawGrandpaFoot();
+
+			case "dummy-world":
+				return this.drawDummyItemWorld();
+
+			case "dummy-inv":
+				return this.drawDummyItemInv();
 			
 			default:
 				return null;
@@ -144,6 +150,30 @@ export class TextureManager {
 		graphics.beginFill(0x303030);
 		graphics.drawRect(5, 0, 10, 18);
 		graphics.drawRect(0, 18, 15, 5);
+		graphics.endFill();
+
+		var texture = graphics.generateTexture();
+		this._game.world.remove(graphics, true);
+		return texture;
+	}
+
+	private drawDummyItemWorld(): PIXI.RenderTexture {
+		var graphics = this._game.add.graphics(0, 0, this._game.world);
+
+		graphics.beginFill(0xa700a7);
+		graphics.drawRect(0, 0, 40, 40);
+		graphics.endFill();
+
+		var texture = graphics.generateTexture();
+		this._game.world.remove(graphics, true);
+		return texture;
+	}
+
+	private drawDummyItemInv(): PIXI.RenderTexture {
+		var graphics = this._game.add.graphics(0, 0, this._game.world);
+
+		graphics.beginFill(0xa700a7);
+		graphics.drawRect(0, 0, 20, 20);
 		graphics.endFill();
 
 		var texture = graphics.generateTexture();
