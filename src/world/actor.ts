@@ -10,6 +10,12 @@ export class Actor extends WorldObject {
 	protected _sprite: Phaser.Sprite;
 	protected _graphics: Phaser.Graphics;
 	//protected _state: GameManager;
+	
+	/** 
+	 * Called when the actor attempts to move to a location it is not allowed.
+	 * Two parameters are sent: the x position before the move, and the desired move position.
+	 */
+	public onMoveBlocked: Phaser.Signal = new Phaser.Signal();
 
 	constructor(_game: Phaser.Game, _parent: Phaser.Group, protected _state:GameManager) {
 		super(_game, _parent);
@@ -42,6 +48,8 @@ export class Actor extends WorldObject {
 
 		if (chunk.allowMove(nextX)) {
 			this._container.x += dx;
+		} else {
+			this.onMoveBlocked.dispatch(this._container.x, this._container.x + dx);
 		}
 		
 		this._container.y += dy;

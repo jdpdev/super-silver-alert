@@ -17,6 +17,13 @@ export class Controller {
 	}
 
 	/**
+	 * The actor is in the world and ready to be commanded
+	 */
+	spawn() {
+
+	}
+
+	/**
 	 * Update every tick
 	 * @param {number} delta Time elapsed since last tick
 	 */

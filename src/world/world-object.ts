@@ -44,7 +44,13 @@ export abstract class WorldObject {
 	setParent(parent: Phaser.Group) {
 		this.prepareContainer(parent);
 		parent.add(this._container);
-		
+	}
+
+	/**
+	 * Notification that object has been spawned in the world
+	 */
+	spawn() {
+
 	}
 
 	protected prepareContainer(parent: Phaser.Group) {

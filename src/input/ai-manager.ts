@@ -29,7 +29,7 @@ export class AIManager {
 	}
 
 	update(delta: number) {
-
+		this._spawnedAIs.forEach((actor) => actor.update(delta));
 	}
 
 	/**
@@ -49,7 +49,7 @@ export class AIManager {
 			}
 
 			var actor = new Nurse(this._game.game, null, this._game);
-
+			actor.setController(this._ais[i]);
 			this._game.addAI(actor, null);
 			this._spawnedAIs.push(actor);
 		}

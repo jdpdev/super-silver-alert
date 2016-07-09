@@ -20,6 +20,9 @@ export class TextureManager {
 			case "grandpa-foot":
 				return this.drawGrandpaFoot();
 
+			case "grandpa-arm":
+				return this.drawGrandpaArm();
+
 			case "dummy-world":
 				return this.drawDummyItemWorld();
 
@@ -42,13 +45,11 @@ export class TextureManager {
 		// Body
 		graphics.beginFill(0x6b8e23);
 		graphics.drawRect(-30, -40, 60, 40);
-		graphics.drawRect(-35, -30, 5, 10);
 		graphics.endFill();
 
 		// head
 		graphics.beginFill(0xfbdcbd);
 		graphics.drawRect(-25, -50, 40, 30);
-		graphics.drawRect(-40, -30, 5, 10);
 		graphics.endFill();
 
 		// hair
@@ -75,15 +76,31 @@ export class TextureManager {
 		graphics.drawRect(3, -23, 2, 2);
 		graphics.endFill();
 
-		// cane
-		graphics.beginFill(0xa16e2c);
-		graphics.drawRect(-40, -25, 5, 35);
-		graphics.endFill();
-
 		var texture = graphics.generateTexture();
 
 		this._game.world.remove(graphics, true);
 
+		return texture;
+	}
+
+	private drawGrandpaArm(): PIXI.RenderTexture {
+		var graphics = this._game.add.graphics(0, 0, this._game.world);
+
+		graphics.beginFill(0x6b8e23);
+		graphics.drawRect(5, 0, 10, 10);
+		graphics.endFill();
+
+		graphics.beginFill(0xfbdcbd);
+		graphics.drawRect(0, 0, 5, 10);
+		graphics.endFill();
+
+		// cane
+		graphics.beginFill(0xa16e2c);
+		graphics.drawRect(0, 5, 5, 35);
+		graphics.endFill();
+
+		var texture = graphics.generateTexture();
+		this._game.world.remove(graphics, true);
 		return texture;
 	}
 

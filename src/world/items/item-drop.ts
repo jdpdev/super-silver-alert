@@ -17,7 +17,7 @@ export class ItemDrop extends WorldObject {
 		return this._item;
 	}
 
-	spawn(item: Item) {
+	drop(item: Item) {
 		this._item = item;
 		this._container.create(0, 0, this.manager.getTexture(item.worldTexture));
 	}

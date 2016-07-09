@@ -74,6 +74,7 @@ export class GameManager extends Phaser.State {
 
 		this._pc = new Grandpa(this.game, null, this);
 		this._pc.setParent(this._pcLayer);
+		this._pc.spawn();
 		//this._nurse = new Nurse(this.game, this._frontLayer, this);
 
 		var start = this._blueprint.getCorridor(1);
@@ -85,6 +86,7 @@ export class GameManager extends Phaser.State {
 		
 		this._gameTime.update(delta);
 		this._pc.update(delta);
+		this._aiManager.update(delta);
 	}
 
 	getTexture(name: string): PIXI.RenderTexture {
@@ -101,6 +103,7 @@ export class GameManager extends Phaser.State {
 			} while (chunk = chunk.next);
 
 			this._chunkLayer.removeAll(true);
+			this._frontLayer.removeAll(true);
 
 			this._chunks = new LinkedList<Chunk>();
 		}
@@ -149,7 +152,11 @@ export class GameManager extends Phaser.State {
 
 		do {
 			chunk = this._chunkFactory.build(desc.id, desc.data, this._chunkLayer);
-			this._chunks.add(chunk);
+
+			if (chunk != null) {
+				chunk.spawn();
+				this._chunks.add(chunk);
+			}
 		} while (desc = <EssentialChunk>desc.next);
 
 		// Need to draw and position after connections are made
@@ -240,6 +247,7 @@ export class GameManager extends Phaser.State {
 			//this._frontLayer.add(actor);
 			actor.setParent(this._frontLayer);
 			actor.setPosition(loc, 420);
+			actor.spawn();
 		}
 	}
 
@@ -248,6 +256,6 @@ export class GameManager extends Phaser.State {
 	}
 
 	removeAI(actor: Actor) {
-		this._frontLayer.remove(actor);
+		actor.remove();
 	}
 }

@@ -15,5 +15,7 @@ export class Nurse extends Player {
 
 		this._rightFootSprite = this._game.add.sprite(5, -28, null, null, this._container);
 		this._rightFootSprite.texture = this._state.getTexture("nurse-foot");
+
+		this._walkTween.setLegs(this._leftFootSprite, this._leftFootSprite.x + 10, this._rightFootSprite, this._rightFootSprite.x - 10, 250);
 	}
 }
