@@ -32,7 +32,7 @@ export class Actor extends WorldObject {
 	 * @param {number} dx Change in x position
 	 * @param {number} dy Change in y position
 	 */
-	translate(dx: number, dy: number): Chunk {
+	protected translate(dx: number, dy: number): Chunk {
 		var nextX = this._container.x + dx;
 		var chunk = this.getLocationChunk(nextX);
 
@@ -55,11 +55,6 @@ export class Actor extends WorldObject {
 
 	draw() {
 		
-	}
-
-	setController(controller: Controller) {
-		this._controller = controller;
-		controller.assignActor(this);
 	}
 
 	setCameraFocus(camera: Phaser.Camera) {

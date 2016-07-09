@@ -70,10 +70,6 @@ export class PlayerController extends Controller {
 			direction = 1;
 		}
 
-		if (direction == 0) {
-			return;
-		}
-
-		this._actor.translate(delta * 150 * direction, 0);
+		this._actor.move(direction);
 	}
 }

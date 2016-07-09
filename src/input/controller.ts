@@ -1,17 +1,18 @@
 import {Actor} from "../world/actor";
+import {Player} from "../world/actors/player";
 import {GameManager} from "../states/game-manager";
 
 /**
  * Base actor controller
  */
 export class Controller {
-	protected _actor: Actor = null;
+	protected _actor: Player = null;
 
 	constructor(protected _state:GameManager) {
 
 	}
 
-	assignActor(actor:Actor) {
+	assignActor(actor:Player) {
 		this._actor = actor;
 	}
 
