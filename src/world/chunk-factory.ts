@@ -12,6 +12,8 @@ export class ChunkFactory {
 	 * @return {Chunk} The new chunk
 	 */
 	build(id:number, data:any, parent:Phaser.Group):Chunk {
+		var chunk: Chunk = null;
+
 		switch (data.biome) {
 			
 			// Reception
@@ -21,7 +23,7 @@ export class ChunkFactory {
 			// Corridor
 			case 1:
 			default:
-				return new CorridorChunk(this._game, parent, id, data);
+				chunk = new CorridorChunk(this._game, null, id, data);
 
 			// Patio
 			/*case 2:
@@ -35,5 +37,8 @@ export class ChunkFactory {
 			case 4:
 				break;*/
 		}
+
+		chunk.setParent(parent);
+		return chunk;
 	}
 }

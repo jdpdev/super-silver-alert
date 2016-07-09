@@ -1,9 +1,19 @@
 import {Player} from "./player";
+import {GameManager} from "../../states/game-manager";
+import {PlayerController} from "../../input/player-controller";
 
 export class Grandpa extends Player {
 
 	private _leftFootSprite: Phaser.Sprite;
 	private _rightFootSprite: Phaser.Sprite;
+
+	constructor(game: Phaser.Game, parent: Phaser.Group, state:GameManager) {
+		super(game, parent, state);
+
+		this.setController(new PlayerController(state, this._game.input));
+
+		//this.draw();
+	}
 
 	draw() {
 		var texture = this._state.getTexture("grandpa");

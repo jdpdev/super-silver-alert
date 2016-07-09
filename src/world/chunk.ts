@@ -11,6 +11,8 @@ export abstract class Chunk extends WorldObject implements ILinkable {
 
 	protected _manager: GameManager = null;
 
+	protected _data: any = null;
+
 	// Chunk chain (linked list of live chunks)
 	protected _previous: Chunk = null;
 	protected _next: Chunk = null;
@@ -25,9 +27,10 @@ export abstract class Chunk extends WorldObject implements ILinkable {
 
 	protected _actions: Action[] = [];
 
-	constructor(_game: Phaser.Game, _parent: Phaser.Group, protected _id: number, protected _data: any) {
+	constructor(_game: Phaser.Game, _parent: Phaser.Group, protected _id: number, data: any) {
 		super(_game, _parent);
 
+		this._data = data;
 		this._manager = <GameManager>_game.state.getCurrentState();
 	}
 

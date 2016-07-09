@@ -9,11 +9,14 @@ export class Actor extends WorldObject {
 
 	protected _sprite: Phaser.Sprite;
 	protected _graphics: Phaser.Graphics;
+	//protected _state: GameManager;
 
 	constructor(_game: Phaser.Game, _parent: Phaser.Group, protected _state:GameManager) {
 		super(_game, _parent);
 
-		this.draw();
+		if (this._container) {
+			this.draw(); 
+		}
 	}
 
 	/**

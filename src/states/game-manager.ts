@@ -8,8 +8,8 @@ import {Actor} from "../world/actor";
 import {Player} from "../world/actors/player";
 import {Grandpa} from "../world/actors/grandpa";
 import {Nurse} from "../world/actors/nurse";
-import {PlayerController} from "../input/player-controller";
 
+import {AIManager} from "../input/ai-manager";
 import {TextureManager} from "../content/texture-manager";
 import {GameTime, GameDate} from "../util/game-time";
 
@@ -20,10 +20,13 @@ export class GameManager extends Phaser.State {
 	private _chunkFactory: ChunkFactory = null;
 	private _textureManager: TextureManager = null;
 	private _gameTime: GameTime = null;
+	private _aiManager: AIManager = null;
 
 	private _chunkLayer: Phaser.Group;
 	private _pcLayer: Phaser.Group;
 	private _frontLayer: Phaser.Group;
+
+	private _corridor: Corridor = null;
 
 	private _chunks: LinkedList<Chunk> = new LinkedList<Chunk>();
 
@@ -65,13 +68,13 @@ export class GameManager extends Phaser.State {
 		this._pcLayer.y = 10;
 		this._frontLayer.y = 15;
 
+		this._aiManager = new AIManager(this);
 		this._chunkFactory = new ChunkFactory(this.game);
 		this._textureManager = new TextureManager(this);
 
-		this._pc = new Grandpa(this.game, this._pcLayer, this);
-		this._pc.setController(new PlayerController(this, this.game.input));
-
-		this._nurse = new Nurse(this.game, this._frontLayer, this);
+		this._pc = new Grandpa(this.game, null, this);
+		this._pc.setParent(this._pcLayer);
+		//this._nurse = new Nurse(this.game, this._frontLayer, this);
 
 		var start = this._blueprint.getCorridor(1);
 		this.loadCorridor(start, start.getChunkInOrder(4).id);
@@ -137,6 +140,8 @@ export class GameManager extends Phaser.State {
 			return;
 		}
 
+		this._corridor = corridor;
+
 		var chunk: Chunk;
 		var lastChunk: Chunk;
 		var spawnPos: number = 0;
@@ -168,13 +173,11 @@ export class GameManager extends Phaser.State {
 			lastChunk = chunk;
 		} while (chunk = chunk.next);
 
-		//this.world.camera.x = spawnPos;
+		this._aiManager.changeLocation(corridor.id);
 		
 		this._pc.setPosition(spawnPos, 420);
 		this._pc.setCameraFocus(this.world.camera);
 		(<Player>this._pc).getLocationConnections();
-
-		this._nurse.setPosition(spawnPos, 420);
 	}
 
 	/**
@@ -199,6 +202,23 @@ export class GameManager extends Phaser.State {
 		return null;
 	}
 
+	protected getChunkLocation(chunkId: number): number {
+		var chunk = this._chunks.first;
+
+		if (!chunk) {
+			return null;
+		}
+
+		do {
+			if (chunk.id == chunkId) {
+				return chunk.x + (chunk.bounds.width / 2);
+			}
+
+		} while (chunk = chunk.next);
+
+		return null;
+	}
+
 	/**
 	 * Return the corridor that a given chunk id belongs to
 	 * @param  {number}   id The id of the chunk
@@ -206,5 +226,28 @@ export class GameManager extends Phaser.State {
 	 */
 	getChunkCorridor(id: number): Corridor {
 		return this._blueprint.findChunkCorridor(id);
+	}
+
+	addAI(actor: Actor, chunkId: number) {
+		// Randomly select chunk
+		if (chunkId == null) {
+			chunkId = this._corridor.getRandomChunk();
+		}
+
+		var loc = this.getChunkLocation(chunkId);
+
+		if (loc != null) {
+			//this._frontLayer.add(actor);
+			actor.setParent(this._frontLayer);
+			actor.setPosition(loc, 420);
+		}
+	}
+
+	get aiLayer(): Phaser.Group {
+		return this._frontLayer;
+	}
+
+	removeAI(actor: Actor) {
+		this._frontLayer.remove(actor);
 	}
 }

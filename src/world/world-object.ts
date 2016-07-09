@@ -4,7 +4,9 @@ export abstract class WorldObject {
 	protected _container: Phaser.Group = null;
 
 	constructor(protected _game: Phaser.Game, protected _parent: Phaser.Group) {
-		this._container = _game.add.group(_parent);
+		if (this._parent != null) {
+			this.prepareContainer(_parent);
+		}
 	}
 
 	get manager():GameManager {
@@ -37,6 +39,18 @@ export abstract class WorldObject {
 	 */
 	get y(): number {
 		return this._container.y;
+	}
+
+	setParent(parent: Phaser.Group) {
+		this.prepareContainer(parent);
+		parent.add(this._container);
+		
+	}
+
+	protected prepareContainer(parent: Phaser.Group) {
+		this._parent = parent;
+		this._container = this._game.add.group(parent);
+		this.draw();
 	}
 
 	/**

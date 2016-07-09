@@ -66,6 +66,27 @@ export class Corridor {
 
         return false;
     }
+
+    /**
+     * Get the id of a random chunk in the corridor
+     * @return {number} [description]
+     */
+    getRandomChunk(): number {
+        var rand = Math.round(Math.random() * (this._chunks.length - 1));
+
+        var chunk = this._chunks.first;
+        var i = 0;
+
+        do {
+            if (i == rand) {
+                return chunk.id;
+            } else {
+                i++;
+            }
+        } while (chunk = <EssentialChunk>chunk.next);
+
+        return null;
+    }
 }
 
 /**

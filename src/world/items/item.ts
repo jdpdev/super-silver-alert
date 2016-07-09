@@ -41,7 +41,7 @@ export class Item {
 		}
 
 		if (data.invTexture) {
-			this._invTextureId = data.invTexture;
+			this._invTexutreId = data.invTexture;
 		}
 	}
 }
