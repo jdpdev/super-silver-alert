@@ -61,6 +61,8 @@ export class CorridorChunk extends Chunk {
 		if (this._data.connect.up) {
 			if (this._data.connect.up == -1 || this._data.connect.up.data.biome == 2) {
 				this.drawOutdoorDoorWall();
+			} else if (this._data.connect.up.data.biome == 5) { 
+				this.drawRoomDoor();
 			} else {
 				this.drawCorridorDoorWall();
 			}
@@ -125,10 +127,12 @@ export class CorridorChunk extends Chunk {
 		this._backWall.drawRect(0, 0, 400, 200);
 		this._backWall.endFill();
 
-		this._backWall.beginFill(<number>this._data.color);
-		this._backWall.drawRect(0, 150, 400, 25);
-		this._backWall.drawRect(0, 0, 2, 200);
-		this._backWall.endFill();
+		if (this._data.color) {
+			this._backWall.beginFill(<number>this._data.color);
+			this._backWall.drawRect(0, 150, 400, 25);
+			this._backWall.drawRect(0, 0, 2, 200);
+			this._backWall.endFill();
+		}
 	}
 
 	// A door between corridors
@@ -151,7 +155,25 @@ export class CorridorChunk extends Chunk {
 		this._backWall.endFill();
 
 		// Connection sign
-		this.drawUpSign();
+		this.drawUpSign(320);
+	}
+
+	// A door between corridors
+	protected drawRoomDoor() {
+		this.drawWall();
+
+		// doorframe
+		this._backWall.beginFill(CorridorChunk._doorFrameColor);
+		this._backWall.drawRect(125, 50, 100, 150);
+		this._backWall.endFill();
+
+		// doors
+		this._backWall.beginFill(0xd3a15f);
+		this._backWall.drawRect(135, 60, 80, 140);
+		this._backWall.endFill();
+
+		// Connection sign
+		this.drawUpSign(260);
 	}
 
 	protected drawOutdoorDoorWall() {
@@ -173,10 +195,10 @@ export class CorridorChunk extends Chunk {
 		this._backWall.endFill();
 
 		// Connection sign
-		this.drawUpSign();
+		this.drawUpSign(320);
 	}
 
-	protected drawUpSign() {
+	protected drawUpSign(x: number) {
 		if (!this._data.connect.up) {
 			return;
 		}
@@ -191,7 +213,7 @@ export class CorridorChunk extends Chunk {
 				return;
 			}
 
-			this._game.add.text(320, 285, corridor.name, {fontSize: 16, backgroundColor: "#f7f7f7", fill: "#000000"}, this._container);
+			this._game.add.text(x, 285, corridor.name, {fontSize: 16, backgroundColor: "#f7f7f7", fill: "#000000"}, this._container);
 		}
 	}
 
