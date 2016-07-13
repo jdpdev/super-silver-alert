@@ -1,6 +1,9 @@
 import {GameManager} from "../states/game-manager";
 
-export class GameTime {
+/**
+ * The current game date and time
+ */
+export class GameTimeManager {
 
 	/** @type {number} Internal clock time the timer started at  */
 	private _startTime: number = 0;
@@ -43,6 +46,9 @@ export class GameTime {
 	}
 }
 
+/**
+ * A specific day and time in game time
+ */
 export class GameDate {
 	constructor(private _totalTime: number) {
 		
@@ -101,5 +107,37 @@ export class GameDate {
 		}
 
 		return `Day ${this.day}, ${this.hour}:${mins}`;
+	}
+
+	/**
+	 * Returns if the time of the day is between two times
+	 * @param  {GameTime} min The lower bound
+	 * @param  {GameTime} max The upper bound
+	 * @return {boolean}      Whether the time lies between the two bounds
+	 */
+	between(min: GameTime, max: GameTime): boolean {
+		var nowHour = this.hour;
+		var nowMin = this.minute;
+
+		return (min.hour <= nowHour && nowHour <= max.hour) && (min.minute <= nowMin && nowMin <= max.minute);
+	}
+}
+
+export class GameTime {
+	constructor(private _hour: number, private _minute: number) {
+
+	}
+
+	get hour(): number {
+		return this._hour;
+	}
+
+	get minute(): number {
+		return this._minute;
+	}
+
+	toString(): string {
+		var minute = this._minute < 10 ? `0${this._minute}` : `${this._minute}`;
+		return `${this._hour}:${minute}`;
 	}
 }

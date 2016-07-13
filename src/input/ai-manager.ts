@@ -55,6 +55,8 @@ export class AIManager {
 		}
 	}
 
+	//escapeAttempt(chunkId: number)
+
 	/**
 	 * Spawn an AI
 	 */

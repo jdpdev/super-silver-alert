@@ -33,33 +33,36 @@ export class CorridorChunk extends Chunk {
 		}
 
 		if (this._data.connect.up) {
-			this.addWalkConnection(100, 300, "up", this._data.connect.up != -1 ? this._data.connect.up.id : -1);
+			this.addConnection(100, 300, "up", this._data.connect.up);
 		}
 
 		if (this._data.connect.down) {
-			this.addWalkConnection(100, 300, "down", this._data.connect.down != -1 ? this._data.connect.down.id : -1);
+			this.addConnection(100, 300, "down", this._data.connect.down);
 		}
 
 		if (this._data.connect.left) {
-			this.addWalkConnection(0, this._leftLimitX + 50, "left", this._data.connect.left != -1 ? this._data.connect.left.id : -1);
+			this.addConnection(0, this._leftLimitX + 50, "left", this._data.connect.left);
 		}
 
 		if (this._data.connect.right) {
-			this.addWalkConnection(this._rightLimitX - 50, this._width, "right", this._data.connect.right != -1 ? this._data.connect.right.id : -1);
+			this.addConnection(this._rightLimitX - 50, this._width, "right", this._data.connect.right);
 		}
 	}
 
 	draw() {
 		this.drawCeiling();
+		this.drawFloor();
 
 		if (this._data.connect.down) {
-			this.drawConnectingFloor();
-		} else {
-			this.drawFloor();
+			if (this._data.biome == 5) {
+				this.drawRoomExitFloor();
+			} else {
+				this.drawConnectingFloor();
+			}
 		}
 
 		if (this._data.connect.up) {
-			if (this._data.connect.up == -1 || this._data.connect.up.data.biome == 2) {
+			if (this._data.connect.up.chunkId == -1 || this._data.connect.up.data.biome == 2) {
 				this.drawOutdoorDoorWall();
 			} else if (this._data.connect.up.data.biome == 5) { 
 				this.drawRoomDoor();
@@ -130,7 +133,7 @@ export class CorridorChunk extends Chunk {
 		if (this._data.color) {
 			this._backWall.beginFill(<number>this._data.color);
 			this._backWall.drawRect(0, 150, 400, 25);
-			this._backWall.drawRect(0, 0, 2, 200);
+			//this._backWall.drawRect(0, 0, 2, 200);
 			this._backWall.endFill();
 		}
 	}
@@ -204,10 +207,10 @@ export class CorridorChunk extends Chunk {
 		}
 
 		// Exit sign
-		if (this._data.connect.up == -1) {
+		if (this._data.connect.up.destination < 0) {
 			this._game.add.text(150, 210, "EXIT", {fontSize: 16, backgroundColor: "#202020", fill: "#ff0000", "boundsAlignH": "center"}, this._container);
 		} else {
-			var corridor = (<GameManager>this._game.state.getCurrentState()).getChunkCorridor(this._data.connect.up.id);
+			var corridor = (<GameManager>this._game.state.getCurrentState()).getChunkCorridor(this._data.connect.up.chunkId);
 			
 			if (!corridor) {
 				return;
@@ -222,10 +225,10 @@ export class CorridorChunk extends Chunk {
 			return;
 		}
 
-		if (this._data.connect.left == -1) {
+		if (this._data.connect.left.destination <= 0) {
 			this._game.add.text(60, 210, "EXIT", {fontSize: 16, backgroundColor: "#202020", fill: "#ff0000", "boundsAlignH": "center"}, this._container);
 		} else {
-			var corridor = (<GameManager>this._game.state.getCurrentState()).getChunkCorridor(this._data.connect.left.id);
+			var corridor = (<GameManager>this._game.state.getCurrentState()).getChunkCorridor(this._data.connect.left.chunkId);
 			
 			if (!corridor) {
 				return;
@@ -241,10 +244,10 @@ export class CorridorChunk extends Chunk {
 		}
 
 		// Exit sign
-		if (this._data.connect.right == -1) {
+		if (this._data.connect.right.destination <= 0) {
 			this._game.add.text(280, 210, "EXIT", {fontSize: 16, backgroundColor: "#202020", fill: "#ff0000", "boundsAlignH": "center"}, this._container);
 		} else {
-			var corridor = (<GameManager>this._game.state.getCurrentState()).getChunkCorridor(this._data.connect.right.id);
+			var corridor = (<GameManager>this._game.state.getCurrentState()).getChunkCorridor(this._data.connect.right.chunkId);
 			
 			if (!corridor) {
 				return;
@@ -303,18 +306,30 @@ export class CorridorChunk extends Chunk {
 		this._floor = this._game.add.graphics(0, 400, this._container);
 		
 		this._floor.beginFill(0xe7eae7);
-		this._floor.drawRect(0, 0, 400, 80);
+		this._floor.drawRect(0, 40, 400, 90);
 		this._floor.endFill();
 
 		this._floor.beginFill(0xa7aaa7);
 		for (var i = 0; i < 4; i++) {
-			this._floor.drawRect(i * 100 + 10, 0, 2, 40);
+			this._floor.drawRect(i * 100 + 10, 40, 2, 90);
 		}
 
-		for (var i = 0; i < 2; i++) {
-			this._floor.drawRect(0, 40 + i * 150, 400, 2);
+		for (var i = 0; i < 4; i++) {
+			if (i == 1) {
+				continue;
+			}
+
+			this._floor.drawRect(0, 40 + (i * i * 10), 400, 2);
 		}
 
+		this._floor.endFill();
+	}
+
+	protected drawRoomExitFloor() {
+		this._floor = this._game.add.graphics(0, 400, this._container);
+		
+		this._floor.beginFill(0xe7eae7);
+		this._floor.drawRect(150, 40, 100, 50);
 		this._floor.endFill();
 	}
 

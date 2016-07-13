@@ -3,7 +3,10 @@ import {WorldObject} from "./world-object"
 import {Item} from "./items/item"
 import {Action} from "../actions/action"
 import {Teleport} from "../actions/teleport"
+import {MainEntryEscape} from "../actions/main-escape"
+import {BackDoorEscape} from "../actions/back-escape"
 import {GameManager} from "../states/game-manager"
+import {ChunkDef, ConnectionDef} from "./blueprint-factory"
 
 export type ChunkConnections = { up: Action, down: Action, left: Action, right: Action };
 
@@ -11,7 +14,7 @@ export abstract class Chunk extends WorldObject implements ILinkable {
 
 	protected _manager: GameManager = null;
 
-	protected _data: any = null;
+	protected _data: ChunkDef = null;
 
 	// Chunk chain (linked list of live chunks)
 	protected _previous: Chunk = null;
@@ -27,7 +30,7 @@ export abstract class Chunk extends WorldObject implements ILinkable {
 
 	protected _actions: Action[] = [];
 
-	constructor(_game: Phaser.Game, _parent: Phaser.Group, protected _id: number, data: any) {
+	constructor(_game: Phaser.Game, _parent: Phaser.Group, protected _id: number, data: ChunkDef) {
 		super(_game, _parent);
 
 		this._data = data;
@@ -89,12 +92,45 @@ export abstract class Chunk extends WorldObject implements ILinkable {
 		return dirs;
 	}
 
-	protected addWalkConnection(xLeft:number, xRight: number, direction: string, chunkId: number) {
-		var action = new Teleport(this._manager, "Walk", chunkId);
+	protected addConnection(xLeft: number, xRight: number, direction: string, target: ConnectionDef) {
+		if (target.destination < 0) {
+			this.addEscape(xLeft, xRight, direction, target);
+		} else {
+			this.addWalkConnection(xLeft, xRight, direction, target);
+		}
+	}
+
+	private addWalkConnection(xLeft:number, xRight: number, direction: string, target: ConnectionDef) {
+		var action = new Teleport(this._manager, "Walk", target);
 		action.setBounds(xLeft, xRight);
 		action.direction = direction;
 
 		this._actions.push(action);
+	}
+
+	private addEscape(xLeft: number, xRight: number, direction: string, target: ConnectionDef) {
+		var action = null;
+
+		switch (target.destination) {
+			
+			// Main entry escape
+			case -1:
+				action = new MainEntryEscape(this._manager, target);
+				break;
+
+			// Back door escape
+			case -2:
+				action = new BackDoorEscape(this._manager, target);
+				break;
+			
+			default:
+				return;
+		}
+
+		action.setBounds(xLeft, xRight);
+		action.direction = direction;
+
+		this._actions.push(action);	
 	}
 
 	protected isInUpConnection(x: number): boolean {

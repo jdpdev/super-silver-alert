@@ -1,4 +1,5 @@
 import {GameManager} from "../states/game-manager";
+import {Restriction, RestrictionResponse} from "./components/restriction";
 
 export abstract class Action {
 
@@ -9,6 +10,8 @@ export abstract class Action {
 
 	/** @type {boolean} Whether the action happens in the world (true) or in the inventory (false) */
 	protected _isWorldAction: boolean = true;
+
+	protected _restrictions: Restriction[];
 
 	get isWorldAction(): boolean {
 		return this._isWorldAction;
@@ -60,4 +63,30 @@ export abstract class Action {
 	 * Activate the action
 	 */
 	performAction(data?:any) { }
+
+	addRestriction(restriction: Restriction) {
+		if (this._restrictions == null) {
+			this._restrictions = [];
+		}
+
+		this._restrictions.push(restriction);
+	}
+
+	/**
+	 * Returns if the action is restricted
+	 * @return {RestrictionResponse|boolean} 
+	 */
+	isRestricted(): RestrictionResponse | boolean {
+		if (this._restrictions) {
+			for (var i = 0; i < this._restrictions.length; i++) {
+				var response = this._restrictions[i].isRestricted(this._manager);
+
+				if (response.isRestricted) {
+					return response;
+				}
+			}
+		}
+
+		return false;
+	}
 }

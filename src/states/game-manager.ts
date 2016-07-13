@@ -11,7 +11,7 @@ import {Nurse} from "../world/actors/nurse";
 
 import {AIManager} from "../input/ai-manager";
 import {TextureManager} from "../content/texture-manager";
-import {GameTime, GameDate} from "../util/game-time";
+import {GameTimeManager, GameDate} from "../util/game-time";
 
 export class GameManager extends Phaser.State {
 
@@ -19,7 +19,7 @@ export class GameManager extends Phaser.State {
 
 	private _chunkFactory: ChunkFactory = null;
 	private _textureManager: TextureManager = null;
-	private _gameTime: GameTime = null;
+	private _gameTime: GameTimeManager = null;
 	private _aiManager: AIManager = null;
 
 	private _chunkLayer: Phaser.Group;
@@ -56,7 +56,7 @@ export class GameManager extends Phaser.State {
 		this.game.renderer.renderSession.roundPixels = true;
 
 		// Set game time
-		this._gameTime = new GameTime(this, 600);
+		this._gameTime = new GameTimeManager(this, 600);
 		var now = this._gameTime.date;
 		now.advanceTo(9, 0);
 		this._gameTime.advanceToDate(now);

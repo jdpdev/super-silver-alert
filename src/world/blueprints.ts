@@ -1,4 +1,5 @@
 import {LinkedList, ILinkable} from "../util/linked-list";
+import {ChunkDef} from "./blueprint-factory"
 
 /**
  * A corridor is a single screen, that is, a section of the building that is 
@@ -17,7 +18,7 @@ export class Corridor {
         this._chunks = new LinkedList<EssentialChunk>();
     }
 
-    createChunk(data:any): EssentialChunk {
+    createChunk(data:ChunkDef): EssentialChunk {
         var def = new EssentialChunk(this.getNextId(), data);
         this._chunks.add(def);
 
@@ -151,7 +152,7 @@ export class EssentialChunk implements ILinkable {
     get id(): number { return this._id; }
     get data(): any { return this._data; }
 
-    constructor(private _id: number, private _data:any = null) {
+    constructor(private _id: number, private _data: ChunkDef = null) {
         
     }
 
@@ -168,9 +169,9 @@ export class EssentialChunk implements ILinkable {
             return false;
         }
 
-        return this._data.connect.up == -1 ||
-                this._data.connect.down == -1 ||
-                this._data.connect.left == -1 ||
-                this._data.connect.right == -1;
+        return this._data.connect.up.hasExit ||
+                this._data.connect.down.hasExit ||
+                this._data.connect.left.hasExit ||
+                this._data.connect.right.hasExit;
     }
 }

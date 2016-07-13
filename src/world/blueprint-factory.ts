@@ -1,4 +1,41 @@
-import {Blueprint, Corridor} from "./blueprints";
+import {Blueprint, Corridor, EssentialChunk} from "./blueprints";
+import {GameTime} from "../util/game-time";
+
+export class ConnectionDef {
+	constructor(public destination: EssentialChunk|number, public openTime:GameTime, public closeTime:GameTime) { }
+
+	get chunkId(): number {
+		if (typeof this.destination === "number") {
+			return <number>this.destination;
+		} else {
+			return (<EssentialChunk>this.destination).id;
+		}
+	}
+
+	get data():ChunkDef {
+		if (typeof this.destination === "number") {
+			return null;
+		} else {
+			return (<EssentialChunk>this.destination).data;
+		}
+	}
+
+	get hasExit(): boolean {
+		return this.destination < 0;
+	}
+}
+
+export type ChunkDef = {
+	biome: number,
+	color: number,
+	deco: {},
+	connect: {
+		up: ConnectionDef,
+		down: ConnectionDef,
+		left: ConnectionDef,
+		right: ConnectionDef
+	}
+}
 
 export class BlueprintFactory {
 
@@ -72,7 +109,7 @@ export class BlueprintFactory {
 
 			// Escape
 			if (i == 0) {
-				data.connect.left = -1;
+				data.connect.left = new ConnectionDef(-1, new GameTime(7, 0), new GameTime(21, 0));	// Main entrance
 			}
 
 			// Deco
@@ -97,7 +134,7 @@ export class BlueprintFactory {
 			};
 
 			if (i == 7) {
-				data.connect.right = -1;
+				data.connect.right = new ConnectionDef(-2, null, null); // Emergency exit
 			}
 
 			B.createChunk(data);
@@ -116,15 +153,6 @@ export class BlueprintFactory {
 				}
 			};
 
-			/*if (i == 3) {
-				data.connect.up = D.id;
-			} else if (i == 6) {
-				data.connect.up = F.id;
-				data.connect.down = E.id;
-			} else if (i == 10) {
-				data.connect.down = G.id;
-			}*/
-
 			C.createChunk(data);
 		}
 
@@ -142,7 +170,7 @@ export class BlueprintFactory {
 			};
 
 			if (i == 6) {
-				data.connect.right = -1;
+				data.connect.right = new ConnectionDef(-2, null, null); // emergency exit
 			}
 
 			F.createChunk(data);
@@ -231,19 +259,19 @@ export class BlueprintFactory {
 		this.forgeLink(C, 1, "up", G, 3, "right");
 
 		// ...rooms
-		this.forgeLink(B, 1, "up", H, 0, "left");
-		this.forgeLink(B, 2, "up", I, 0, "left");
-		this.forgeLink(B, 4, "up", J, 0, "left");
-		this.forgeLink(B, 5, "up", K, 0, "left");
+		this.forgeLink(B, 1, "up", H, 0, "down");
+		this.forgeLink(B, 2, "up", I, 0, "down");
+		this.forgeLink(B, 4, "up", J, 0, "down");
+		this.forgeLink(B, 5, "up", K, 0, "down");
 
-		this.forgeLink(C, 9, "up", L, 1, "right");
-		this.forgeLink(C, 8, "up", M, 1, "right");
-		this.forgeLink(C, 6, "up", N, 1, "right");
-		this.forgeLink(C, 5, "up", O, 1, "right");
+		this.forgeLink(C, 9, "up", L, 1, "down");
+		this.forgeLink(C, 8, "up", M, 1, "down");
+		this.forgeLink(C, 6, "up", N, 1, "down");
+		this.forgeLink(C, 5, "up", O, 1, "down");
 	}
 
 	private forgeLink(a: Corridor, aid: number, adir: string, b: Corridor, bid: number, bdir: string) {
-		a.getChunkInOrder(aid).data.connect[adir] = b.getChunkInOrder(bid);
-		b.getChunkInOrder(bid).data.connect[bdir] = a.getChunkInOrder(aid);
+		a.getChunkInOrder(aid).data.connect[adir] = new ConnectionDef(b.getChunkInOrder(bid), null, null);
+		b.getChunkInOrder(bid).data.connect[bdir] = new ConnectionDef(a.getChunkInOrder(aid), null, null);
 	}
 }
