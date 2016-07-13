@@ -27,39 +27,41 @@ export class PlayerController extends Controller {
 	 */
 	update(delta: number) {
 
-		/*if (this._transitionLockout) {
-			if (this._leftKey.duration == 0 && this._rightKey.duration == 0 && this._upKey.duration == 0 && this._downKey.duration == 0) {
-				this._transitionLockout = false;
-			} else {
-				return;
-			}
-		}*/
+		var isLeftJustDown: boolean = this._leftKey.justDown;
+		var isRightJustDown: boolean = this._rightKey.justDown;
+		var isUpJustDown: boolean = this._upKey.justDown;
+		var isDownJustDown: boolean = this._downKey.justDown;
+
+		// Revert lockout
+		if (isLeftJustDown || isRightJustDown || isUpJustDown || isDownJustDown) {
+			this._transitionLockout = false;
+		}
 
 		// Check for zone transition
 		// TODO Require holding the button for some time
 		var connections = (<Player>this._actor).connections;
 
 		if (connections) {
-			if (connections.left && this._leftKey.isDown) {
+			
+
+			//console.log(this._transitionLockout + ", " + isLeftJustDown + ", " + (isLeftJustDown === true));
+			//console.log(connections.left != null && isLeftJustDown === true && this._transitionLockout === false);
+
+			// Do actions
+			if (connections.left && isLeftJustDown && !this._transitionLockout) {
 				connections.left.performAction();
-				this._transitionLockout = true;
 				return;
-			} else if (connections.right && this._rightKey.isDown) {
+			} else if (connections.right && isRightJustDown && !this._transitionLockout) {
 				connections.right.performAction();
-				this._transitionLockout = true;
 				return;
-			} else if (connections.up && this._upKey.isDown) {
+			} else if (connections.up && isUpJustDown && !this._transitionLockout) {
 				connections.up.performAction();
-				this._transitionLockout = true;
 				return;
-			} else if (connections.down && this._downKey.isDown) {
+			} else if (connections.down && isDownJustDown && !this._transitionLockout) {
 				connections.down.performAction();
-				this._transitionLockout = true;
 				return;
 			}
 		}
-
-		//console.log("left >> " + this._leftKey.isDown + "; right >> " + this._rightKey.isDown);
 
 		// Move
 		var direction = 0;
@@ -70,6 +72,13 @@ export class PlayerController extends Controller {
 			direction = 1;
 		}
 
-		this._actor.move(direction);
+		if (!this._transitionLockout) {
+			this._actor.move(direction);
+		}
+	}
+
+	sceneTransitioned() {
+		console.log("sceneTransition");
+		this._transitionLockout = true;
 	}
 }

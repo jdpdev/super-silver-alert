@@ -11,6 +11,10 @@ export class Actor extends WorldObject {
 	protected _graphics: Phaser.Graphics;
 	//protected _state: GameManager;
 	
+	get controller(): Controller {
+		return this._controller;
+	}
+	
 	/** 
 	 * Called when the actor attempts to move to a location it is not allowed.
 	 * Two parameters are sent: the x position before the move, and the desired move position.

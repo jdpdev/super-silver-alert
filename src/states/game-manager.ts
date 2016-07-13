@@ -9,6 +9,7 @@ import {Player} from "../world/actors/player";
 import {Grandpa} from "../world/actors/grandpa";
 import {Nurse} from "../world/actors/nurse";
 
+import {PlayerController} from "../input/player-controller";
 import {AIManager} from "../input/ai-manager";
 import {TextureManager} from "../content/texture-manager";
 import {GameTimeManager, GameDate} from "../util/game-time";
@@ -75,7 +76,6 @@ export class GameManager extends Phaser.State {
 		this._pc = new Grandpa(this.game, null, this);
 		this._pc.setParent(this._pcLayer);
 		this._pc.spawn();
-		//this._nurse = new Nurse(this.game, this._frontLayer, this);
 
 		var start = this._blueprint.getCorridor(1);
 		this.loadCorridor(start, start.getChunkInOrder(4).id);
@@ -185,6 +185,7 @@ export class GameManager extends Phaser.State {
 		this._pc.setPosition(spawnPos, 420);
 		this._pc.setCameraFocus(this.world.camera);
 		(<Player>this._pc).getLocationConnections();
+		(<PlayerController>this._pc.controller).sceneTransitioned();
 	}
 
 	/**
