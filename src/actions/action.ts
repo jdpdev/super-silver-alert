@@ -1,5 +1,18 @@
 import {GameManager} from "../states/game-manager";
+import {Player} from "../world/actors/player";
 import {Restriction, RestrictionResponse} from "./components/restriction";
+
+export class ActionResponse {
+	constructor(protected _success:boolean, protected _message:string = "") {}
+
+	get isSuccess(): boolean {
+		return this._success;
+	}
+
+	get message(): string {
+		return this._message;
+	}
+}
 
 export abstract class Action {
 
@@ -13,8 +26,14 @@ export abstract class Action {
 
 	protected _restrictions: Restriction[];
 
+	protected _instigator: Player;
+
 	get isWorldAction(): boolean {
 		return this._isWorldAction;
+	}
+
+	get instigator(): Player {
+		return this._instigator;
 	}
 
 	constructor(protected _manager:GameManager, protected _label: string) {
@@ -62,7 +81,10 @@ export abstract class Action {
 	/**
 	 * Activate the action
 	 */
-	performAction(data?:any) { }
+	performAction(instigator: Player, data?:any): Promise<ActionResponse> { 
+		this._instigator = instigator;
+		return null;
+	}
 
 	addRestriction(restriction: Restriction) {
 		if (this._restrictions == null) {

@@ -13,6 +13,10 @@ export class AIController extends Controller {
 
 	protected _moveDirection: number = 0;
 
+	protected _orderResolve: (value: boolean) => void;
+
+	protected _orderTargetX: number = null;
+
 	/** @type {number} Id of the corridor the AI is in */
 	get location(): number {
 		return this._currentCorridor;
@@ -42,11 +46,33 @@ export class AIController extends Controller {
 	 * @param {number} delta Time elapsed since last tick
 	 */
 	update(delta: number) {
+		if (this._orderTargetX != null) {
 
+		}
 	}
 
 	protected moveBlocked(currentX: number, desiredX: number) {
 		this._moveDirection *= -1;
 		this._actor.move(this._moveDirection);
+	}
+
+	orderTo(x: number): Promise<boolean> {
+		return new Promise<boolean>(
+			(resolve, reject) => {
+				if (x == this._actor.x) {
+					resolve(true);
+				} else {
+					this._orderResolve = resolve;
+					this._orderTargetX = x;
+
+					this._actor.move(x - this._actor.x > 0 ? 1 : -1);
+					this._actor.setTargetPosition(x, 
+						(success: boolean) => {
+							resolve(success);
+						}
+					);
+				}
+			}
+		);
 	}
 }

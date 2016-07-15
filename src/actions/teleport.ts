@@ -1,7 +1,8 @@
 import {GameManager} from "../states/game-manager";
-import {Action} from "./action"
+import {Action, ActionResponse} from "./action"
 import {IDoorAction} from "./door"
 import {ConnectionDef} from "../world/blueprint-factory"
+import {Player} from "../world/actors/player"
 
 export class Teleport extends Action implements IDoorAction {
 
@@ -12,8 +13,14 @@ export class Teleport extends Action implements IDoorAction {
 	/**
 	 * Teleport to a new chunk
 	 */
-	performAction() {
-		this._manager.teleportToChunk(this._connection.chunkId);
+	performAction(instigator: Player): Promise<ActionResponse> {
+		return new Promise<ActionResponse>((resolve, reject) => {
+			if (this._manager.teleportToChunk(this._connection.chunkId)) {
+				resolve(new ActionResponse(true));
+			} else {
+				reject(new ActionResponse(false));
+			}
+		});
 	}
 
 	/** @type {boolean} Is the door is locked? */

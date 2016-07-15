@@ -115,12 +115,12 @@ export abstract class Chunk extends WorldObject implements ILinkable {
 			
 			// Main entry escape
 			case -1:
-				action = new MainEntryEscape(this._manager, target);
+				action = new MainEntryEscape(this._manager, this, target);
 				break;
 
 			// Back door escape
 			case -2:
-				action = new BackDoorEscape(this._manager, target);
+				action = new BackDoorEscape(this._manager, this, target);
 				break;
 			
 			default:

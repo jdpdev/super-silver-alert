@@ -14,6 +14,8 @@ import {AIManager} from "../input/ai-manager";
 import {TextureManager} from "../content/texture-manager";
 import {GameTimeManager, GameDate} from "../util/game-time";
 
+import {EscapeAction} from "../actions/escape";
+
 export class GameManager extends Phaser.State {
 
 	private _blueprint: Blueprint;
@@ -26,6 +28,7 @@ export class GameManager extends Phaser.State {
 	private _chunkLayer: Phaser.Group;
 	private _pcLayer: Phaser.Group;
 	private _frontLayer: Phaser.Group;
+	private _timeText: Phaser.Text;
 
 	private _corridor: Corridor = null;
 
@@ -35,6 +38,8 @@ export class GameManager extends Phaser.State {
 	private _pc: Actor = null;
 
 	private _nurse: Actor = null;
+
+	private _delayCameraLock: boolean = false;
 
 	get gameDate() {
 		return this._gameTime.date;
@@ -57,7 +62,7 @@ export class GameManager extends Phaser.State {
 		this.game.renderer.renderSession.roundPixels = true;
 
 		// Set game time
-		this._gameTime = new GameTimeManager(this, 600);
+		this._gameTime = new GameTimeManager(this, 60);
 		var now = this._gameTime.date;
 		now.advanceTo(9, 0);
 		this._gameTime.advanceToDate(now);
@@ -65,6 +70,7 @@ export class GameManager extends Phaser.State {
 		this._chunkLayer = new Phaser.Group(this.game, this.world);
 		this._pcLayer = new Phaser.Group(this.game, this.world);
 		this._frontLayer = new Phaser.Group(this.game, this.world);
+		this._timeText = this.game.add.text(5, 5, "Hello!", {fontSize: 16, backgroundColor: "#f7f7f7", fill: "#000000"}, this.world);
 
 		this._pcLayer.y = 10;
 		this._frontLayer.y = 15;
@@ -77,8 +83,8 @@ export class GameManager extends Phaser.State {
 		this._pc.setParent(this._pcLayer);
 		this._pc.spawn();
 
-		var start = this._blueprint.getCorridor(1);
-		this.loadCorridor(start, start.getChunkInOrder(4).id);
+		var start = this._blueprint.startCorridor;
+		this.loadCorridor(start, this._blueprint.startChunk);
 	}
 
 	update() {
@@ -87,6 +93,18 @@ export class GameManager extends Phaser.State {
 		this._gameTime.update(delta);
 		this._pc.update(delta);
 		this._aiManager.update(delta);
+
+		//this._timeText.text = this._gameTime.date.toString();
+
+		// this._pc.setCameraFocus(this.world.camera);
+		
+		//if (!this._delayCameraLock) {
+			if (this._pc.x < 400 || this._pc.x >= (this._chunks.length - 1) * 400) {
+				this._pc.setCameraFocus(this.world.camera, false);
+			} else {
+				this._pc.setCameraFocus(this.world.camera, true);
+			}
+		//}
 	}
 
 	getTexture(name: string): PIXI.RenderTexture {
@@ -113,22 +131,22 @@ export class GameManager extends Phaser.State {
 	 * Teleport to a chunk
 	 * @param {number} chunkId The id of the chunk to teleport to
 	 */
-	teleportToChunk(chunkId: number) {
+	teleportToChunk(chunkId: number): boolean {
 
 		//console.log("teleportToChunk >> " + chunkId);
 		
 		// Special case, level exit
 		if (chunkId == -1) {
-			return;
+			return false;
 		}
 
 		var corridor = this._blueprint.findChunkCorridor(chunkId);
 
 		if (corridor == null) {
-			return;
+			return false;
 		}
 
-		this.loadCorridor(corridor, chunkId);
+		return this.loadCorridor(corridor, chunkId);
 	}
 
 	/**
@@ -136,11 +154,11 @@ export class GameManager extends Phaser.State {
 	 * @param {Corridor} corridor The corridor to load
 	 * @param {number}   chunkId  The id of the chunk to spawn at
 	 */
-	protected loadCorridor(corridor: Corridor, chunkId: number) {
+	protected loadCorridor(corridor: Corridor, chunkId: number): boolean {
 		var desc = corridor.first;
 
 		if (desc == null) {
-			return;
+			return false;
 		}
 
 		this._corridor = corridor;
@@ -183,9 +201,14 @@ export class GameManager extends Phaser.State {
 		this._aiManager.changeLocation(corridor.id);
 		
 		this._pc.setPosition(spawnPos, 420);
-		this._pc.setCameraFocus(this.world.camera);
+		this._pc.setCameraFocus(this.world.camera, true, true);
 		(<Player>this._pc).getLocationConnections();
 		(<PlayerController>this._pc.controller).sceneTransitioned();
+
+		//this._delayCameraLock = true;
+		//setTimeout(() => this._delayCameraLock = false, 0.15);
+
+		return true;
 	}
 
 	/**
@@ -259,4 +282,57 @@ export class GameManager extends Phaser.State {
 	removeAI(actor: Actor) {
 		actor.remove();
 	}
+
+	escapeAttempt(action: EscapeAction) {
+
+		// Check if any AIs are going to catch the attempt.
+		this.checkAIOnEscape(action);
+	}
+
+	/**
+	 * Check with the AI manager if any AIs catch the escape
+	 * @param {EscapeAction} action The escape action
+	 */
+	private checkAIOnEscape(action: EscapeAction) {
+		this._aiManager.escapeAttempt(action)
+			.then(
+				(escape) => {
+					if (escape == EscapeMode.RedHanded) {
+						this.transitionToNextDay();
+					} else {
+						// Escape was not caught, check for things that will catch on the break
+						this.checkDelayOnEscape(action);
+					}
+				}
+			);
+	}
+
+	/**
+	 * Check if the puzzle state catches the escape
+	 * @param {EscapeAction} action The escape action
+	 */
+	private checkDelayOnEscape(action: EscapeAction) {
+
+	}
+
+	transitionToNextDay() {
+		this.game.paused = true;
+
+		var date = this._gameTime.date;
+		date.advanceTo(9, 0);
+		this._gameTime.advanceToDate(date);
+
+		this.loadCorridor(this._blueprint.startCorridor, this._blueprint.startChunk);
+		this.game.paused = false;
+	}
+
+	lockoutControls(lock: boolean) {
+		(<PlayerController>this._pc.controller).controlLockout(lock);
+	}
+}
+
+export enum EscapeMode {
+	None,
+	RedHanded,
+	Delayed
 }

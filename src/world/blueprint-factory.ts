@@ -76,6 +76,8 @@ export class BlueprintFactory {
 			G is a common area
 		 */
 		
+		blueprint.setStart(1, 12);
+		
 		var A = blueprint.createCorridor("Reception");
 		var B = blueprint.createCorridor("West Wing");
 		var C = blueprint.createCorridor("Main Wing");

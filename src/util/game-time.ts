@@ -86,15 +86,18 @@ export class GameDate {
 
 		// Simple advance within same day
 		if (hour > curHour || (hour == curHour && minute >= curMin)) {
-			add = (hour * 3600 + minute) - (curHour * 3600 - curMin);
+			add = (hour * 3600 + minute * 60) - (curHour * 3600 + curMin * 60);
 		}
 
 		// Advance to the next day
 		else {
-			add = (hour * 3600 + minute) + (86400 - (curHour * 3600 - curMin));
+			add = (hour * 3600 + minute * 60) + (86400 - (curHour * 3600 + curMin * 60));
 		}
 
+		//console.log(`${this.day} ${this.hour}:${this.minute}`);
+		//console.log(`advance before ${this.toString()} (${this._totalTime})`);
 		this._totalTime += add;
+		//console.log(`advance after ${this.toString()} (+${add} = ${this._totalTime})`);
 	}
 
 	toString(): string {
@@ -106,7 +109,7 @@ export class GameDate {
 			mins = `${this.minute}`;
 		}
 
-		return `Day ${this.day}, ${this.hour}:${mins}`;
+		return `Day ${this.day + 1}, ${this.hour}:${mins}`;
 	}
 
 	/**

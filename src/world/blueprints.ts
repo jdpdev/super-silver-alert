@@ -97,6 +97,31 @@ export class Blueprint {
     
     private _corridors: Corridor[] = [];
     private _highId: number = 0;
+
+    /** @type {number} Id of the corridor to start the game in */
+    private _startCorridor: number = 0;
+
+    /** @type {number} Id of the chunk to start the game in */
+    private _startChunk: number = 0;
+
+    get startCorridor(): Corridor {
+        for (var i = 0; i < this._corridors.length; i++) {
+            if (this._corridors[i].id == this._startCorridor) {
+                return this._corridors[i];
+            }
+        }
+
+        return null;
+    }
+
+    get startChunk(): number {
+        return this._startChunk;
+    }
+
+    setStart(corridor: number, chunk: number) {
+        this._startCorridor = corridor;
+        this._startChunk = chunk;
+    }
     
     /**
      * Create a new corridor instance

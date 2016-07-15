@@ -1,5 +1,5 @@
 import {GameManager} from "../states/game-manager";
-import {Action} from "./action"
+import {Action, ActionResponse} from "./action"
 import {Player} from "../world/actors/player"
 
 /**
@@ -24,7 +24,7 @@ export class InventoryInteraction extends Action {
 	}
 
 	/** Add to the user's inventory */
-	performAction(player: Player) {
-		
+	performAction(player: Player): Promise<ActionResponse> {
+		return null;
 	}
 }

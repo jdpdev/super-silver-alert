@@ -1,7 +1,8 @@
 import {Actor} from "../world/actor";
 import {Nurse} from "../world/actors/nurse";
-import {GameManager} from "../states/game-manager";
+import {GameManager, EscapeMode} from "../states/game-manager";
 import {AIController} from "./ai-controller";
+import {EscapeAction} from "../actions/escape";
 
 export class AIManager {
 
@@ -12,6 +13,9 @@ export class AIManager {
 
 	/** @type {number} The id of the game's current corridor */
 	private _currentCorridorId: number = -1;
+
+	/** @type {number} World-wide alert level, based on failed escape attempts */
+	private _baseAlertLevel: number = 0;
 
 	/** @type {number} The id of the game's current corridor */
 	get location(): number {
@@ -55,7 +59,44 @@ export class AIManager {
 		}
 	}
 
-	//escapeAttempt(chunkId: number)
+	/**
+	 * Player is making escape attempt, check if anyone is going to catch it
+	 * @param {EscapeAction} action The called escape action
+	 */
+	escapeAttempt(action: EscapeAction): Promise<EscapeMode> {
+		return new Promise<EscapeMode>(
+			(resolve) => {
+				// Check if anyone has eyes on target. 
+				// Sight is proportional to distance, facing, and general alert level
+				var distanceSort: Actor[] = this._spawnedAIs.slice(0);
+				
+				distanceSort.sort((a, b): number => {
+					return Math.abs(action.instigator.x - a.x) - Math.abs(action.instigator.x - b.x);
+				});
+
+				if (Math.abs(action.instigator.x - distanceSort[0].x) <= 800) {
+					console.log("Caught red handed!");
+
+					this._game.lockoutControls(true);
+					(<AIController>distanceSort[0].controller).orderTo(action.instigator.x)
+						.then(
+							(success) => {
+								this._game.lockoutControls(false);
+								resolve(EscapeMode.RedHanded);
+							}
+						);
+
+					return;
+				}
+
+				console.log("Get away with murder");
+				
+				// If the door has an alarm, is someone around to catch it?
+				
+				resolve(EscapeMode.None);
+			}
+		);
+	}
 
 	/**
 	 * Spawn an AI

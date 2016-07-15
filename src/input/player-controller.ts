@@ -10,7 +10,11 @@ export class PlayerController extends Controller {
 	private _upKey: Phaser.Key = null;
 	private _downKey: Phaser.Key = null;
 
+	/** @type {boolean} Lockout imposed by scene transition */
 	private _transitionLockout: boolean = false;
+
+	/** @type {boolean} Lockout imposed by game state */
+	private _controlLockout: boolean = false;
 	
 	constructor(state: GameManager, input: Phaser.Input) {
 		super(state);
@@ -37,6 +41,10 @@ export class PlayerController extends Controller {
 			this._transitionLockout = false;
 		}
 
+		if (this._controlLockout) {
+			return;
+		}
+
 		// Check for zone transition
 		// TODO Require holding the button for some time
 		var connections = (<Player>this._actor).connections;
@@ -49,16 +57,16 @@ export class PlayerController extends Controller {
 
 			// Do actions
 			if (connections.left && isLeftJustDown && !this._transitionLockout) {
-				connections.left.performAction();
+				connections.left.performAction(this._actor);
 				return;
 			} else if (connections.right && isRightJustDown && !this._transitionLockout) {
-				connections.right.performAction();
+				connections.right.performAction(this._actor);
 				return;
 			} else if (connections.up && isUpJustDown && !this._transitionLockout) {
-				connections.up.performAction();
+				connections.up.performAction(this._actor);
 				return;
 			} else if (connections.down && isDownJustDown && !this._transitionLockout) {
-				connections.down.performAction();
+				connections.down.performAction(this._actor);
 				return;
 			}
 		}
@@ -80,5 +88,9 @@ export class PlayerController extends Controller {
 	sceneTransitioned() {
 		console.log("sceneTransition");
 		this._transitionLockout = true;
+	}
+
+	controlLockout(lock: boolean) {
+		this._controlLockout = lock;
 	}
 }

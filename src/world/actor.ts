@@ -11,6 +11,11 @@ export class Actor extends WorldObject {
 	protected _graphics: Phaser.Graphics;
 	//protected _state: GameManager;
 	
+	protected _cameraFollow: boolean = false;
+
+	protected _moveCallback: (boolean) => void = null;
+	protected _moveDestination: number = 0;
+	
 	get controller(): Controller {
 		return this._controller;
 	}
@@ -51,9 +56,20 @@ export class Actor extends WorldObject {
 		}
 
 		if (chunk.allowMove(nextX)) {
-			this._container.x += dx;
+			if (this._moveCallback && Math.abs(this._moveDestination - this._container.x) <= dx) {
+				this._container.x = this._moveDestination;
+				this._moveCallback(true);
+				this._moveCallback = null;
+			} else {
+				this._container.x += dx;
+			}
 		} else {
 			this.onMoveBlocked.dispatch(this._container.x, this._container.x + dx);
+			
+			if (this._moveCallback) {
+				this._moveCallback(false);
+				this._moveCallback = null;
+			}
 		}
 		
 		this._container.y += dy;
@@ -69,8 +85,24 @@ export class Actor extends WorldObject {
 		
 	}
 
-	setCameraFocus(camera: Phaser.Camera) {
-		camera.focusOn(this._container);
-		camera.follow(this._sprite, null, 0.1);
+	setCameraFocus(camera: Phaser.Camera, giveFocus: boolean, force: boolean = false) {
+
+		if (giveFocus) {
+			if (!this._cameraFollow || force) {
+				camera.focusOn(this._container);
+				camera.follow(this._sprite, null, 0.1);
+				this._cameraFollow = true;
+			}
+		} else {
+			/*if (this._cameraFollow || force) {
+				camera.unfollow();
+				this._cameraFollow = false;
+			}*/
+		}
+	}
+
+	setTargetPosition(x: number, callback: (boolean) => void) {
+		this._moveDestination = x;
+		this._moveCallback = callback;
 	}
 }
