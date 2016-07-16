@@ -28,6 +28,7 @@ export class GameManager extends Phaser.State {
 	private _chunkLayer: Phaser.Group;
 	private _pcLayer: Phaser.Group;
 	private _frontLayer: Phaser.Group;
+	private _fadeOut: Phaser.Graphics;
 	private _timeText: Phaser.Text;
 
 	private _corridor: Corridor = null;
@@ -37,9 +38,11 @@ export class GameManager extends Phaser.State {
 	/** @type {Actor} The player */
 	private _pc: Actor = null;
 
-	private _nurse: Actor = null;
+	private _pauseLoop: boolean = false;
 
 	private _delayCameraLock: boolean = false;
+
+	private _fadeTween: Phaser.Tween = null;
 
 	get gameDate() {
 		return this._gameTime.date;
@@ -70,7 +73,16 @@ export class GameManager extends Phaser.State {
 		this._chunkLayer = new Phaser.Group(this.game, this.world);
 		this._pcLayer = new Phaser.Group(this.game, this.world);
 		this._frontLayer = new Phaser.Group(this.game, this.world);
-		this._timeText = this.game.add.text(5, 5, "Hello!", {fontSize: 16, backgroundColor: "#f7f7f7", fill: "#000000"}, this.world);
+		
+		this._fadeOut = this.game.add.graphics(0, 0, this.world);
+		this._fadeOut.beginFill(0x000000);
+		this._fadeOut.drawRect(0, 0, this.stage.width, this.stage.height);
+		this._fadeOut.endFill();
+		this.stage.addChild(this._fadeOut);
+		this._fadeOut.alpha = 0;
+
+		this._timeText = this.game.add.text(5, 5, "Hello!", {fontSize: 16, fill: "#ffffff"}, this.world);
+		this.stage.addChild(this._timeText);
 
 		this._pcLayer.y = 10;
 		this._frontLayer.y = 15;
@@ -90,11 +102,13 @@ export class GameManager extends Phaser.State {
 	update() {
 		var delta = this.game.time.elapsed / 1000;
 		
-		this._gameTime.update(delta);
-		this._pc.update(delta);
-		this._aiManager.update(delta);
+		if (!this._pauseLoop) {
+			this._gameTime.update(delta);
+			this._pc.update(delta);
+			this._aiManager.update(delta);
+		}
 
-		//this._timeText.text = this._gameTime.date.toString();
+		this._timeText.text = this._gameTime.date.toString();
 
 		// this._pc.setCameraFocus(this.world.camera);
 		
@@ -316,14 +330,31 @@ export class GameManager extends Phaser.State {
 	}
 
 	transitionToNextDay() {
-		this.game.paused = true;
+		this._pauseLoop = true;
 
+		var inTween: Phaser.Tween = new Phaser.Tween(this._fadeOut, this.game, this.game.tweens);
+		inTween.to({alpha: 1}, 1000);
+		inTween.onComplete.add(this.doNextDayTransition, this);
+		
+		var outTween: Phaser.Tween = new Phaser.Tween(this._fadeOut, this.game, this.game.tweens);
+		outTween.to({alpha: 0}, 1000, null, true, 1000); 
+		outTween.onComplete.add(this.endNextDayTransition, this);
+
+		inTween.chain(outTween);
+		inTween.start();
+	}
+
+	private doNextDayTransition() {
 		var date = this._gameTime.date;
 		date.advanceTo(9, 0);
 		this._gameTime.advanceToDate(date);
 
 		this.loadCorridor(this._blueprint.startCorridor, this._blueprint.startChunk);
-		this.game.paused = false;
+		this.game.paused = false;	
+	}
+
+	private endNextDayTransition() {
+		this._pauseLoop = false;
 	}
 
 	lockoutControls(lock: boolean) {

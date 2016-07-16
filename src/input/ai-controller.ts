@@ -68,6 +68,7 @@ export class AIController extends Controller {
 					this._actor.move(x - this._actor.x > 0 ? 1 : -1);
 					this._actor.setTargetPosition(x, 
 						(success: boolean) => {
+							this._actor.move(0);
 							resolve(success);
 						}
 					);
