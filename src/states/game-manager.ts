@@ -1,6 +1,7 @@
 import {BlueprintFactory} from "../world/blueprint-factory";
 import {Blueprint, Corridor, EssentialChunk} from "../world/blueprints";
 import {ChunkFactory} from "../world/chunk-factory";
+import {ItemManager} from "../world/items/item-manager";
 import {Chunk} from "../world/chunk";
 import {LinkedList} from "../util/linked-list";
 
@@ -13,6 +14,7 @@ import {PlayerController} from "../input/player-controller";
 import {AIManager} from "../input/ai-manager";
 import {TextureManager} from "../content/texture-manager";
 import {GameTimeManager, GameDate} from "../util/game-time";
+import {StateManager} from "../fsm/state-manager";
 
 import {EscapeAction} from "../actions/escape";
 
@@ -20,10 +22,12 @@ export class GameManager extends Phaser.State {
 
 	private _blueprint: Blueprint;
 
+	private _itemManager: ItemManager = null;
 	private _chunkFactory: ChunkFactory = null;
 	private _textureManager: TextureManager = null;
 	private _gameTime: GameTimeManager = null;
 	private _aiManager: AIManager = null;
+	private _stateManager: StateManager = null;
 
 	private _chunkLayer: Phaser.Group;
 	private _pcLayer: Phaser.Group;
@@ -48,6 +52,10 @@ export class GameManager extends Phaser.State {
 		return this._gameTime.date;
 	}
 
+	get itemManager(): ItemManager {
+		return this._itemManager;
+	}
+
 	constructor() {
 		super();
 	}
@@ -58,11 +66,19 @@ export class GameManager extends Phaser.State {
 
 	preload() {
 		this._blueprint = new BlueprintFactory().generateBlueprint(1);
+
+		this._itemManager = new ItemManager();
+		this._itemManager.load(this.game);
+
+		this._stateManager = new StateManager();
+		this._stateManager.loadTree(this.game, "state-tree");
 	}
 
 	create() {
 		this.game.stage.backgroundColor = 0x373a37;
 		this.game.renderer.renderSession.roundPixels = true;
+
+		this._stateManager.initialize(this.game);
 
 		// Set game time
 		this._gameTime = new GameTimeManager(this, 60);
@@ -90,6 +106,7 @@ export class GameManager extends Phaser.State {
 		this._aiManager = new AIManager(this);
 		this._chunkFactory = new ChunkFactory(this.game);
 		this._textureManager = new TextureManager(this);
+		this._itemManager.initialize(this.game);
 
 		this._pc = new Grandpa(this.game, null, this);
 		this._pc.setParent(this._pcLayer);

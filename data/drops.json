@@ -1,0 +1,22 @@
+{
+	"drops": [
+		{
+			"id": 1,
+			"name": "Dresser",
+			"chunk": {
+				"id": 46,
+				"x": 100,
+				"y": 340,
+				"width": 120
+			},
+			"texture": "dresser",
+			"actions": [
+				{
+					"type": "pickup",
+					"item": 1,
+					"remove": true
+				}
+			]
+		}
+	]
+}

@@ -3,11 +3,11 @@ import {Item} from "./item";
 export class Inventory {
 	private _items:Item[] = [];
 
-	add(item: Item) {
+	add(item: number) {
 
 	}
 
-	remove(item: Item) {
+	remove(item: number) {
 		
 	}
 }

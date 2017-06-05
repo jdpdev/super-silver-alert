@@ -10,8 +10,7 @@ export class Item {
 	/** @type {Action[]} Actions that can be performed on the item */
 	protected _actions:Action[] = [];
 
-	protected _worldTextureId: string = null;
-	protected _invTexutreId: string = null;
+	protected _texture: string = null;
 
 	/** @type {number} Horizontal range from the center the item can be picked up from */
 	protected _pickupDist: number = 20;
@@ -25,10 +24,6 @@ export class Item {
 		return this._actions;
 	}
 
-	get worldTexture(): string {
-		return this._worldTextureId;
-	}
-
 	constructor(data:any) {
 		this._id = data.id;
 
@@ -36,12 +31,8 @@ export class Item {
 
 		}
 
-		if (data.worldTexture) {
-			this._worldTextureId = data.worldTexture;
-		}
-
-		if (data.invTexture) {
-			this._invTexutreId = data.invTexture;
+		if (data.texture) {
+			this._texture = data.texture;
 		}
 	}
 }

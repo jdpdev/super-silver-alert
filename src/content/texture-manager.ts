@@ -28,6 +28,9 @@ export class TextureManager {
 
 			case "dummy-inv":
 				return this.drawDummyItemInv();
+
+			case "dresser":
+				return this.drawDresser();
 			
 			default:
 				return null;
@@ -191,6 +194,29 @@ export class TextureManager {
 
 		graphics.beginFill(0xa700a7);
 		graphics.drawRect(0, 0, 20, 20);
+		graphics.endFill();
+
+		var texture = graphics.generateTexture();
+		this._game.world.remove(graphics, true);
+		return texture;
+	}
+
+	private drawDresser(): PIXI.RenderTexture {
+		var graphics = this._game.add.graphics(0, 0, this._game.world);
+
+		graphics.beginFill(0x000000, 0.25);
+		graphics.drawRect(-5, 15, 130, 60);
+		graphics.drawRect(-5, 65, 130, 10);
+		graphics.endFill();
+
+		graphics.beginFill(0xDEB887);
+		graphics.drawRect(0, 0, 120, 70);
+		graphics.endFill();
+
+		graphics.beginFill(0xDEB887);
+		graphics.lineStyle(2, 0x6f4c1e);
+		graphics.drawRect(5, 5, 110, 20);
+		graphics.drawRect(5, 30, 110, 30);
 		graphics.endFill();
 
 		var texture = graphics.generateTexture();

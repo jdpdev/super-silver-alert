@@ -47,6 +47,8 @@ export class CorridorChunk extends Chunk {
 		if (this._data.connect.right) {
 			this.addConnection(this._rightLimitX - 50, this._width, "right", this._data.connect.right);
 		}
+
+		super.initialize();
 	}
 
 	draw() {
@@ -90,6 +92,8 @@ export class CorridorChunk extends Chunk {
 				this.drawRightCapDoor();
 			}
 		}
+
+		super.draw();
 	}
 
 	protected isInUpConnection(x: number): boolean {

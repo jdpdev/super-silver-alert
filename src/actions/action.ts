@@ -40,7 +40,7 @@ export abstract class Action {
 
 	}
 
-	setBounds(left: number, right: number) {
+	setBounds(left: number = 0, right: number = 0) {
 		this._xLeft = left;
 		this._xRight = right;
 	}

@@ -7,6 +7,7 @@ import {MainEntryEscape} from "../actions/main-escape"
 import {BackDoorEscape} from "../actions/back-escape"
 import {GameManager} from "../states/game-manager"
 import {ChunkDef, ConnectionDef} from "./blueprint-factory"
+import {ItemDrop, ItemDropRecord} from "./items/item-drop"
 
 export type ChunkConnections = { up: Action, down: Action, left: Action, right: Action };
 
@@ -30,6 +31,8 @@ export abstract class Chunk extends WorldObject implements ILinkable {
 
 	protected _actions: Action[] = [];
 
+	protected _drops: ItemDrop[] = null;
+
 	constructor(_game: Phaser.Game, _parent: Phaser.Group, protected _id: number, data: ChunkDef) {
 		super(_game, _parent);
 
@@ -41,7 +44,18 @@ export abstract class Chunk extends WorldObject implements ILinkable {
 
 	get width(): number { return this._width; }
 
-	initialize() { }
+	initialize() {
+
+	}
+
+	draw() {
+		var drops = this._manager.itemManager.getDropsInChunk(this._id);
+		this._drops = [];
+
+		for (var i = 0; i < drops.length; i++) {
+			this.addDrop(drops[i]);
+		}
+	}
 
 	remove() {
 		super.remove();
@@ -147,6 +161,12 @@ export abstract class Chunk extends WorldObject implements ILinkable {
 
 	protected isInRightConnection(x: number): boolean {
 		return false;
+	}
+
+	protected addDrop(record: ItemDropRecord) {
+		var drop = new ItemDrop(this._game, this._container);
+		drop.initialize(record);
+		this._drops.push(drop);
 	}
 
 // ***************************************************************************************************************

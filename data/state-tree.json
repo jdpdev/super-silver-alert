@@ -1,0 +1,60 @@
+{
+	"name": "test-state",
+	"default": "first",
+	"nodes": [
+		{
+			"name": "first",
+			"transitions": [
+				{
+					"name": "second",
+					"requirements": [
+						{
+							"input": "first-input",
+							"value": "1"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "second",
+			"transitions": [
+				{
+					"name": "third",
+					"requirements": [
+						{
+							"input": "second-input",
+							"value": "1"
+						}
+					]
+				},
+				{
+					"name": "fourth",
+					"requirements": [
+						{
+							"input": "second-input-skip",
+							"value": "1"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "third",
+			"transitions": [
+				{
+					"name": "fourth",
+					"requirements": [
+						{
+							"input": "third-input",
+							"value": "1"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "fourth"
+		}
+	]
+}

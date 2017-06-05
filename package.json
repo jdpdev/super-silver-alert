@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "dependencies": {
     "phaser": "^2.5.0",
-    "systemjs": "^0.19.31"
+    "strongly-typed-events": "^0.4.1",
+    "systemjs": "^0.19.31",
+    "typescript": "^2.3.4"
   },
   "devDependencies": {
     "del": "^2.2.0",
@@ -12,6 +14,6 @@
     "gulp-sourcemaps": "^1.6.0",
     "gulp-typescript": "^2.13.6",
     "minimist": "^1.2.0",
-    "typescript": "^1.8.10"
+    "typescript": "^2.2.2"
   }
 }

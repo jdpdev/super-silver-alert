@@ -5,16 +5,34 @@ import {Player} from "../world/actors/player"
 
 export class Pickup extends Action {
 
-	constructor(manager: GameManager, label: string, private _item: ItemDrop) {
-		super(manager, label);
+	private _item: ItemDrop = null;
+	private _invId: number = null;
+	private _despawanOnUse: boolean = false;
+
+	set drop(value: ItemDrop) {
+		this._item = value;
+	}
+
+	constructor(manager: GameManager, data: any) {
+		super(manager, "Pickup");
+
+		this._invId = data.item;
+		this._despawanOnUse = data.remove;
 	}
 
 	/** Add to the user's inventory */
 	performAction(player: Player): Promise<ActionResponse> {
 		return new Promise<ActionResponse>(
 			(resolve, reject) => {
-				player.inventory.add(this._item.item);
-				this._item.despawn();
+				if (this._item == null) {
+					reject(null);
+				}
+
+				if (this._despawanOnUse) {
+					this._item.despawn();
+				}
+
+				player.inventory.add(this._invId);
 				resolve(new ActionResponse(true));
 			}
 		);
