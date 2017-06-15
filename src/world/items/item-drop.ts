@@ -14,6 +14,7 @@ export class ItemDropRecord {
 	protected _chunkLocation: number = null;
 
 	protected _chunkOffset: Phaser.Point = null;
+	protected _width: number = 0;
 
 	protected _actions: any[] = null;
 
@@ -23,6 +24,7 @@ export class ItemDropRecord {
 	get texture(): string { return this._texture; }
 	get chunk(): number { return this._chunkLocation; }
 	get chunkOffset(): Phaser.Point { return this._chunkOffset; }
+	get width(): number { return this._width; }
 	get actions(): any[] { return this._actions; }
 
 	constructor(data: any) {
@@ -32,6 +34,7 @@ export class ItemDropRecord {
 		this._texture = data.texture;
 		this._chunkLocation = data.chunk.id;
 		this._chunkOffset = new Phaser.Point(data.chunk.x, data.chunk.y);
+		this._width = data.chunk.width;
 		this._actions = data.actions;
 	}
 }
@@ -65,7 +68,7 @@ export class ItemDrop extends WorldObject {
 		this._item.actions.forEach((action) => {
 			var spawned = ActionFactory.buildAction(action, this.manager)
 
-			spawned.setBounds(record.chunkOffset.x - this._item.pickupDistance, record.chunkOffset.x + this._item.pickupDistance);
+			spawned.setBounds(record.chunkOffset.x - this._item.pickupDistance, record.chunkOffset.x + record.width + this._item.pickupDistance);
 
 			this._actions.push(spawned);
 		});
