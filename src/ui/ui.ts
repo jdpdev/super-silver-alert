@@ -39,9 +39,9 @@ export class UI {
         var arcX: number = x;
         var arcY: number = y;
         var displayList: Action[] = Array.isArray(actions) ? actions : [actions];
-        var count = dispatchEvent.length - 1;
+        var count = displayList.length - 1;
 
-        arcX -= (UI.ACTION_ICON_SIZE * count) / 2;
+        arcX -= (UI.ACTION_ICON_WIDTH * count) / 2 + UI.ACTION_ICON_WIDTH / 2;
 
         for (var action of displayList) {
             var icon = TextureManager.loadTexture(action.icon);
@@ -50,10 +50,8 @@ export class UI {
                 continue;
             }
 
-            var sprite = this._game.game.add.sprite(0, 0, null, null, this._container);
+            var sprite = this._game.game.add.sprite(arcX, arcY, null, null, this._container);
             sprite.texture = icon;
-            sprite.x = arcX;
-            sprite.y = arcY;
 
             arcX += UI.ACTION_ICON_WIDTH;
         }
