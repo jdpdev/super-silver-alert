@@ -11,6 +11,12 @@ export class CorridorChunk extends Chunk {
 	private _ceiling: Phaser.Graphics = null;
 	private _floor: Phaser.Graphics = null;
 
+	private _upPortalMin: number = 100;
+	private _upPortalMax: number = 300;
+
+	private _downPortalMin: number = 100;
+	private _downPortalMax: number = 300;
+
 	initialize() {
 		this._width = 400;
 
@@ -33,7 +39,26 @@ export class CorridorChunk extends Chunk {
 		}
 
 		if (this._data.connect.up) {
-			this.addConnection(100, 300, "up", this._data.connect.up);
+			switch (this.getUpDoorType()) {
+				default: 
+					this._upPortalMin = 100;
+					this._upPortalMax = 300;
+					break;
+
+				// Outside
+				case 2:
+					this._upPortalMin = 100;
+					this._upPortalMax = 300;
+					break;
+
+				// Room
+				case 5:
+					this._upPortalMin = 125;
+					this._upPortalMax = 225;
+					break;
+			}
+
+			this.addConnection(this._upPortalMin, this._upPortalMax, "up", this._data.connect.up);
 		}
 
 		if (this._data.connect.down) {
@@ -64,12 +89,20 @@ export class CorridorChunk extends Chunk {
 		}
 
 		if (this._data.connect.up) {
-			if (this._data.connect.up.chunkId == -1 || this._data.connect.up.data.biome == 2) {
-				this.drawOutdoorDoorWall();
-			} else if (this._data.connect.up.data.biome == 5) { 
-				this.drawRoomDoor();
-			} else {
-				this.drawCorridorDoorWall();
+			switch (this.getUpDoorType()) {
+				default: 
+					this.drawCorridorDoorWall();
+					break;
+
+				// Outside
+				case 2:
+					this.drawOutdoorDoorWall();
+					break;
+
+				// Room
+				case 5:
+					this.drawRoomDoor();
+					break;
 			}
 		} else {
 			this.drawWall();
@@ -96,9 +129,19 @@ export class CorridorChunk extends Chunk {
 		super.draw();
 	}
 
+	protected getUpDoorType(): number {
+		if (this._data.connect.up.chunkId == -1 || this._data.connect.up.data.biome == 2) {
+			return 2;
+		} else if (this._data.connect.up.data.biome == 5) { 
+			return 5;
+		} else {
+			return 0;
+		}
+	}
+
 	protected isInUpConnection(x: number): boolean {
 		if (this._data.connect.up) {
-			return 100 <= x && x <= 300;
+			return this._upPortalMin <= x && x <= this._upPortalMax;
 		} else {
 			return false;
 		}
@@ -106,7 +149,7 @@ export class CorridorChunk extends Chunk {
 
 	protected isInDownConnection(x: number): boolean {
 		if (this._data.connect.down) {
-			return 100 <= x && x <= 300;
+			return this._downPortalMin <= x && x <= this._downPortalMax;
 		} else {
 			return false;
 		}
@@ -181,6 +224,9 @@ export class CorridorChunk extends Chunk {
 
 		// Connection sign
 		this.drawUpSign(260);
+
+		this._upPortalMin = 125;
+		this._upPortalMax = 225;
 	}
 
 	protected drawOutdoorDoorWall() {
@@ -203,6 +249,9 @@ export class CorridorChunk extends Chunk {
 
 		// Connection sign
 		this.drawUpSign(320);
+
+		this._upPortalMin = 100;
+		this._upPortalMax = 300;
 	}
 
 	protected drawUpSign(x: number) {
@@ -335,6 +384,9 @@ export class CorridorChunk extends Chunk {
 		this._floor.beginFill(0xe7eae7);
 		this._floor.drawRect(150, 40, 100, 50);
 		this._floor.endFill();
+
+		this._downPortalMin = 150;
+		this._downPortalMax = 250;
 	}
 
 	protected drawLeftCap() {
