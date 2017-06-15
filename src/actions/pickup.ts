@@ -16,6 +16,7 @@ export class Pickup extends Action {
 	constructor(manager: GameManager, data: any) {
 		super(manager, "Pickup");
 
+		this._icon = "pickupActionIcon";
 		this._invId = data.item;
 		this._despawanOnUse = data.remove;
 	}
@@ -36,13 +37,5 @@ export class Pickup extends Action {
 				resolve(new ActionResponse(true));
 			}
 		);
-	}
-
-	protected loadIcon() {
-		super.loadIcon();
-
-		this._icon.beginFill(0xff00ff);
-		this._icon.drawCircle(0, 0, Action.ICON_SIZE);
-		this._icon.endFill(); 
 	}
 }

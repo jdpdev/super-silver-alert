@@ -31,7 +31,7 @@ export abstract class Action {
 
 	protected _instigator: Player;
 
-	protected _icon: Phaser.Graphics = null;
+	protected _icon: string = null;
 
 	get isWorldAction(): boolean {
 		return this._isWorldAction;
@@ -59,11 +59,7 @@ export abstract class Action {
 		return this._xLeft <= x && x <= this._xRight;
 	}
 
-	get icon() {
-		if (this._icon == null) {
-			this.loadIcon();
-		}
-
+	get icon(): string {
 		return this._icon;
 	}
 
@@ -122,6 +118,12 @@ export abstract class Action {
 	}
 
 	protected loadIcon() {
-		this._icon = this._manager.game.add.graphics(0, 0);
+		/*this._icon = this._manager.game.add.graphics(0, 0);
+
+		this._icon.beginFill(0, 0.2);
+		this._icon.drawCircle(0, 0, Action.ICON_SIZE + 15);
+		this._icon.drawCircle(0, 0, Action.ICON_SIZE + 10);
+		this._icon.drawCircle(0, 0, Action.ICON_SIZE + 5);
+		this._icon.endFill();*/
 	}
 }

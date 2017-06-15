@@ -2,18 +2,19 @@ import {GameManager} from "../states/game-manager";
 import {Player} from "../world/actors/player";
 import {ChunkConnections, DirectionActions} from "../world/chunk";
 import {Action} from "../actions/action"
+import {TextureManager} from "../content/texture-manager"
 
 export class UI {
     public  static ACTION_ICON_SIZE: number = 40;
     private static ACTION_ICON_WIDTH: number = 45;
 
-    private _container: Phaser.Graphics = null;
+    private _container: Phaser.Group = null;
 
     constructor(private _game: GameManager, private _pc: Player) { 
-        this._container = _game.game.add.graphics(0, 0);
+        this._container = _game.game.add.group(_game.stage);
     }
 
-    get container(): Phaser.Graphics {
+    get container(): Phaser.Group {
         return this._container;
     }
 
@@ -43,15 +44,16 @@ export class UI {
         arcX -= (UI.ACTION_ICON_SIZE * count) / 2;
 
         for (var action of displayList) {
-            var icon = action.icon;
+            var icon = TextureManager.loadTexture(action.icon);
 
             if (icon == null) {
                 continue;
             }
 
-            this._container.addChild(icon);
-            icon.x = arcX;
-            icon.y = arcY;
+            var sprite = this._game.game.add.sprite(0, 0, null, null, this._container);
+            sprite.texture = icon;
+            sprite.x = arcX;
+            sprite.y = arcY;
 
             arcX += UI.ACTION_ICON_WIDTH;
         }

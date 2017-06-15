@@ -37,11 +37,25 @@ export class Teleport extends Action implements IDoorAction {
 		return this._label;
 	}
 
+	get icon(): string {
+		switch (this._direction) {
+			case "up":
+				return "teleportUpIcon";
+
+			case "down":
+				return "teleportDownIcon";
+
+			case "left":
+				return "teleportLeftIcon";
+
+			case "right":
+				return "teleportRightIcon";
+		}
+	}
+
 	protected loadIcon() {
 		super.loadIcon();
 
-		this._icon.beginFill(0xffff00);
-		this._icon.drawCircle(0, 0, Action.ICON_SIZE);
-		this._icon.endFill(); 
+		
 	}
 }

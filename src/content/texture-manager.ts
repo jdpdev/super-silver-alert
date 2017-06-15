@@ -2,8 +2,14 @@ import {GameManager} from "../states/game-manager";
 
 export class TextureManager {
 
-	constructor(private _game: GameManager) {
+	private static _instance: TextureManager;
 
+	constructor(private _game: GameManager) {
+		TextureManager._instance = this;
+	}
+
+	static loadTexture(name: string): PIXI.RenderTexture {
+		return this._instance.getTexture(name);
 	}
 
 	getTexture(name:string): PIXI.RenderTexture {
@@ -31,6 +37,15 @@ export class TextureManager {
 
 			case "dresser":
 				return this.drawDresser();
+
+			case "pickupActionIcon":
+				return this.drawPickupActionIcon();
+
+			case "teleportUpIcon":
+				return this.drawTeleportUpActionIcon();
+
+			case "teleportDownIcon":
+				return this.drawTeleportDownActionIcon();
 			
 			default:
 				return null;
@@ -222,5 +237,56 @@ export class TextureManager {
 		var texture = graphics.generateTexture();
 		this._game.world.remove(graphics, true);
 		return texture;
+	}
+
+	private drawTeleportUpActionIcon(): PIXI.RenderTexture {
+		var graphics = this._game.add.graphics(0, 0, this._game.world);
+
+		graphics.beginFill(0xffff00);
+		graphics.drawCircle(0, 0, 40);
+		graphics.endFill(); 
+		
+		graphics.beginFill(0x16ceff);
+		graphics.drawRect(-7, 0, 14, 15);
+		graphics.drawTriangle([new Phaser.Point(-15, 0), new Phaser.Point(15, 0), new Phaser.Point(0, -15)]);
+		graphics.endFill();
+
+		var texture = graphics.generateTexture();
+		this._game.world.remove(graphics, true);
+		return texture; 
+	}
+
+	private drawTeleportDownActionIcon(): PIXI.RenderTexture {
+		var graphics = this._game.add.graphics(0, 0, this._game.world);
+
+		graphics.beginFill(0xffff00);
+		graphics.drawCircle(0, 0, 40);
+		graphics.endFill(); 
+		
+		graphics.beginFill(0x16ceff);
+		graphics.drawRect(-7, -15, 14, 15);
+		graphics.drawTriangle([new Phaser.Point(-15, 0), new Phaser.Point(15, 0), new Phaser.Point(0, 15)]);
+		graphics.endFill();
+
+		var texture = graphics.generateTexture();
+		this._game.world.remove(graphics, true);
+		return texture; 
+	}
+
+	private drawPickupActionIcon(): PIXI.RenderTexture {
+		var graphics = this._game.add.graphics(0, 0, this._game.world);
+
+		graphics.beginFill(0xffffff);
+		graphics.drawCircle(0, 0, 40);
+		graphics.endFill(); 
+		
+		graphics.beginFill(0x16ceff);
+		graphics.drawRect(-12, 5, 24, 10);
+		graphics.drawTriangle([new Phaser.Point(-7, 0), new Phaser.Point(7, 0), new Phaser.Point(0, -15)]);
+		graphics.endFill();
+
+		var texture = graphics.generateTexture();
+		this._game.world.remove(graphics, true);
+		return texture; 
 	}
 }
