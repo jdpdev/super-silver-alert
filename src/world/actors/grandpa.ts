@@ -29,6 +29,10 @@ export class Grandpa extends Player {
 	}
 
 	draw() {
+		this.drawSelf();
+	}
+
+	private drawSelf() {
 		var texture = this._state.getTexture("grandpa");
 
 		this._armSprite = this._game.add.sprite(texture.width / -2 - 10, -55, null, null, this._container);

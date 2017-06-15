@@ -3,6 +3,7 @@ import {Blueprint, Corridor, EssentialChunk} from "../world/blueprints";
 import {ChunkFactory} from "../world/chunk-factory";
 import {ItemManager} from "../world/items/item-manager";
 import {Chunk} from "../world/chunk";
+import {UI} from "../ui/ui";
 import {LinkedList} from "../util/linked-list";
 
 import {Actor} from "../world/actor";
@@ -28,6 +29,7 @@ export class GameManager extends Phaser.State {
 	private _gameTime: GameTimeManager = null;
 	private _aiManager: AIManager = null;
 	private _stateManager: StateManager = null;
+	private _ui: UI = null;
 
 	private _chunkLayer: Phaser.Group;
 	private _pcLayer: Phaser.Group;
@@ -40,7 +42,7 @@ export class GameManager extends Phaser.State {
 	private _chunks: LinkedList<Chunk> = new LinkedList<Chunk>();
 
 	/** @type {Actor} The player */
-	private _pc: Actor = null;
+	private _pc: Player = null;
 
 	private _pauseLoop: boolean = false;
 
@@ -112,6 +114,9 @@ export class GameManager extends Phaser.State {
 		this._pc.setParent(this._pcLayer);
 		this._pc.spawn();
 
+		this._ui = new UI(this, this._pc);
+		this.stage.addChild(this._ui.container);
+
 		var start = this._blueprint.startCorridor;
 		this.loadCorridor(start, this._blueprint.startChunk);
 	}
@@ -136,6 +141,8 @@ export class GameManager extends Phaser.State {
 				this._pc.setCameraFocus(this.world.camera, true);
 			}
 		//}
+
+		this._ui.update(delta);
 	}
 
 	getTexture(name: string): PIXI.RenderTexture {

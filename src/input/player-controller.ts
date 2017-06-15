@@ -2,6 +2,7 @@ import {Controller} from "./controller";
 import {GameManager} from "../states/game-manager";
 import {Actor} from "../world/actor";
 import {Player} from "../world/actors/player";
+import {Action} from "../actions/action"
 
 export class PlayerController extends Controller {
 
@@ -49,7 +50,7 @@ export class PlayerController extends Controller {
 		// TODO Require holding the button for some time
 		var connections = (<Player>this._actor).connections;
 
-		if (connections) {
+		if (connections != null) {
 			
 
 			//console.log(this._transitionLockout + ", " + isLeftJustDown + ", " + (isLeftJustDown === true));
@@ -57,16 +58,16 @@ export class PlayerController extends Controller {
 
 			// Do actions
 			if (connections.left && isLeftJustDown && !this._transitionLockout) {
-				connections.left.performAction(this._actor);
+				this.performAction(connections.left);
 				return;
 			} else if (connections.right && isRightJustDown && !this._transitionLockout) {
-				connections.right.performAction(this._actor);
+				this.performAction(connections.right);
 				return;
 			} else if (connections.up && isUpJustDown && !this._transitionLockout) {
-				connections.up.performAction(this._actor);
+				this.performAction(connections.up);
 				return;
 			} else if (connections.down && isDownJustDown && !this._transitionLockout) {
-				connections.down.performAction(this._actor);
+				this.performAction(connections.down);
 				return;
 			}
 		}
@@ -83,6 +84,24 @@ export class PlayerController extends Controller {
 		if (!this._transitionLockout) {
 			this._actor.move(direction);
 		}
+	}
+
+	private performAction(action: Action | Action[]) {
+		var target:Action = null;
+
+		if (Array.isArray(action)) {
+
+			// TODO Pick from multiple actions
+			if (action.length == 1) {
+				target = action[0];
+			} else {
+				target = action[0];
+			}
+		} else {
+			target = action;
+		}
+
+		target.performAction(this._actor);
 	}
 
 	sceneTransitioned() {

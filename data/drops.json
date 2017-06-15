@@ -2,6 +2,7 @@
 	"drops": [
 		{
 			"id": 1,
+			"itemId": 1,
 			"name": "Dresser",
 			"chunk": {
 				"id": 46,

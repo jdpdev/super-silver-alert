@@ -1,14 +1,29 @@
 import {ItemDropRecord} from "./item-drop"
+import {Item} from "./item"
 
 export class ItemManager {
+	private static _instance: ItemManager = null;
+
+	private _items: Item[] = [];
 	private _drops: ItemDropRecord[] = [];
 
 	load(game:Phaser.Game) {
-		game.load.json("items", "data/drops.json");
+		ItemManager._instance = this;
+
+		game.load.json("items", "data/items.json");
+		game.load.json("drops", "data/drops.json");
 	}
 
 	initialize(game: Phaser.Game) {
-		var data = game.cache.getJSON("items");
+
+		var items = game.cache.getJSON("items");
+
+		for (var def of items.items) {
+			this._items.push(new Item(def));
+		}
+
+		// Drops
+		var data = game.cache.getJSON("drops");
 
 		for (var i = 0; i < data.drops.length; i++) {
 			this._drops.push(new ItemDropRecord(data.drops[i]));		
@@ -30,5 +45,29 @@ export class ItemManager {
 		}
 
 		return drops;
+	}
+
+	/**
+	 * Returns the item with a given id
+	 * @param id The id of the item
+	 * @returns The matching item, or null on error
+	 */
+	static getItem(id: number) {
+		return this._instance.getItemWithId(id);
+	}
+
+	/**
+	 * Returns the item with a given id
+	 * @param id The id of the item
+	 * @returns The matching item, or null on error
+	 */
+	protected getItemWithId(id: number): Item {
+		for (var item of this._items) {
+			if (item.id == id) {
+				return item;
+			}
+		}
+
+		return null;
 	}
 }

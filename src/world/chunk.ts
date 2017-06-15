@@ -9,7 +9,8 @@ import {GameManager} from "../states/game-manager"
 import {ChunkDef, ConnectionDef} from "./blueprint-factory"
 import {ItemDrop, ItemDropRecord} from "./items/item-drop"
 
-export type ChunkConnections = { up: Action, down: Action, left: Action, right: Action };
+export type DirectionActions = Action | Action[];
+export type ChunkConnections = { up: DirectionActions, down: DirectionActions, left: DirectionActions, right: DirectionActions };
 
 export abstract class Chunk extends WorldObject implements ILinkable {
 
@@ -103,6 +104,18 @@ export abstract class Chunk extends WorldObject implements ILinkable {
 			}
 		}
 
+		for (var drop of this._drops) {
+			for (var action of drop.getActions(x)) {
+				if (Array.isArray(dirs.up)) {
+					dirs.up = [dirs.up];
+				} else if (dirs.up == null) {
+					dirs.up = [];
+				}
+
+				dirs.up.push(action);
+			}
+		}
+
 		return dirs;
 	}
 
@@ -165,6 +178,11 @@ export abstract class Chunk extends WorldObject implements ILinkable {
 
 	protected addDrop(record: ItemDropRecord) {
 		var drop = new ItemDrop(this._game, this._container);
+
+		if (drop == null) {
+			return;
+		}
+
 		drop.initialize(record);
 		this._drops.push(drop);
 	}

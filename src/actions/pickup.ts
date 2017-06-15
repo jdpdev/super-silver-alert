@@ -37,4 +37,12 @@ export class Pickup extends Action {
 			}
 		);
 	}
+
+	protected loadIcon() {
+		super.loadIcon();
+
+		this._icon.beginFill(0xff00ff);
+		this._icon.drawCircle(0, 0, Action.ICON_SIZE);
+		this._icon.endFill(); 
+	}
 }

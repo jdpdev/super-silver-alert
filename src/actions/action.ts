@@ -1,6 +1,7 @@
 import {GameManager} from "../states/game-manager";
 import {Player} from "../world/actors/player";
 import {Restriction, RestrictionResponse} from "./components/restriction";
+import {UI} from "../ui/ui"
 
 export class ActionResponse {
 	constructor(protected _success:boolean, protected _message:string = "") {}
@@ -16,6 +17,8 @@ export class ActionResponse {
 
 export abstract class Action {
 
+	static ICON_SIZE: number = UI.ACTION_ICON_SIZE;
+
 	protected _xLeft:number = 0;
 	protected _xRight:number = 0;
 	protected _direction: string = null;
@@ -27,6 +30,8 @@ export abstract class Action {
 	protected _restrictions: Restriction[];
 
 	protected _instigator: Player;
+
+	protected _icon: Phaser.Graphics = null;
 
 	get isWorldAction(): boolean {
 		return this._isWorldAction;
@@ -54,8 +59,12 @@ export abstract class Action {
 		return this._xLeft <= x && x <= this._xRight;
 	}
 
-	get icon(): PIXI.DisplayObject {
-		return null;
+	get icon() {
+		if (this._icon == null) {
+			this.loadIcon();
+		}
+
+		return this._icon;
 	}
 
 	get label(): string {
@@ -110,5 +119,9 @@ export abstract class Action {
 		}
 
 		return false;
+	}
+
+	protected loadIcon() {
+		this._icon = this._manager.game.add.graphics(0, 0);
 	}
 }

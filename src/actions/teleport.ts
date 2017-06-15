@@ -33,11 +33,15 @@ export class Teleport extends Action implements IDoorAction {
 		return null;
 	}
 
-	get icon(): PIXI.DisplayObject {
-		return null;
-	}
-
 	get label(): string {
 		return this._label;
+	}
+
+	protected loadIcon() {
+		super.loadIcon();
+
+		this._icon.beginFill(0xffff00);
+		this._icon.drawCircle(0, 0, Action.ICON_SIZE);
+		this._icon.endFill(); 
 	}
 }

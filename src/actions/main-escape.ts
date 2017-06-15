@@ -9,8 +9,4 @@ export class MainEntryEscape extends EscapeAction {
 	constructor(manager: GameManager, chunk: Chunk, connection: ConnectionDef) {
 		super(manager, "Escape by Main Entry", chunk, connection);
 	}
-
-	get icon(): PIXI.DisplayObject {
-		return null;
-	}
 }

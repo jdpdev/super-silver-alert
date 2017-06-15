@@ -1,0 +1,17 @@
+{
+    "items": [
+        {
+            "id": 1,
+            "name": "Dresser",
+            "texture": "dresser",
+            "pickupDist": 20,
+            "actions": [
+				{
+					"type": "pickup",
+					"item": 1,
+					"remove": true
+				}
+			]
+        }
+    ]
+}
