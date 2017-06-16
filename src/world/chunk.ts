@@ -73,6 +73,11 @@ export abstract class Chunk extends WorldObject implements ILinkable {
 		this._next = null;
 	}
 
+	protected prepareContainer(parent: Phaser.Group) {
+		super.prepareContainer(parent);
+		this._container.name = "chunk";
+	}
+
 	addAction(action: Action) {
 		this._actions.push(action);
 	}

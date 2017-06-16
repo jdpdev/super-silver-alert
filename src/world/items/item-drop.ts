@@ -74,15 +74,25 @@ export class ItemDrop extends WorldObject {
 		});
 	}
 
+	protected prepareContainer(parent: Phaser.Group) {
+		super.prepareContainer(parent);
+	}
+
 	drop(item: Item) {
 		this._item = item;
 		
 	}
 
 	draw() {
+		if (this._record == null) {
+			return;
+		}
+
 		if (this._item != null) {
 			this._container.create(this._record.chunkOffset.x, this._record.chunkOffset.y, this.manager.getTexture(this._item.texture));
 		}
+
+		this._game.add.text(0, 70, `${this.x}, ${this.y}`, {fontSize: 16, backgroundColor: "#000000", fill: "#ffffff"}, this._container);
 	}
 
 	/**

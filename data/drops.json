@@ -5,8 +5,8 @@
 			"itemId": 1,
 			"name": "Dresser",
 			"chunk": {
-				"id": 46,
-				"x": 100,
+				"id": 54,
+				"x": 10,
 				"y": 340,
 				"width": 120
 			},

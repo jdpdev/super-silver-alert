@@ -126,7 +126,15 @@ export class CorridorChunk extends Chunk {
 			}
 		}
 
+		// DEBUG
+		this._game.add.text(50, 120, this._id.toString(), {fontSize: 16, backgroundColor: "#000000", fill: "#ffffff"}, this._container);
+
 		super.draw();
+	}
+
+	protected prepareContainer(parent: Phaser.Group) {
+		super.prepareContainer(parent);
+		this._container.name = "corridor";
 	}
 
 	protected getUpDoorType(): number {
@@ -175,6 +183,7 @@ export class CorridorChunk extends Chunk {
 		this._backWall = this._game.add.graphics(0, 200, this._container);
 		this._backWall.beginFill(CorridorChunk._wallColor);
 		this._backWall.drawRect(0, 0, 400, 200);
+		this._backWall.drawRect(0, -80, 2, 20);
 		this._backWall.endFill();
 
 		if (this._data.color) {
