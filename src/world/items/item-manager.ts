@@ -52,7 +52,7 @@ export class ItemManager {
 	 * @param id The id of the item
 	 * @returns The matching item, or null on error
 	 */
-	static getItem(id: number) {
+	static getItem(id: number): Item {
 		return this._instance.getItemWithId(id);
 	}
 

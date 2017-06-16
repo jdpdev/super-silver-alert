@@ -8,10 +8,21 @@
             "actions": [
 				{
 					"type": "pickup",
-					"item": 1,
-					"remove": true
+					"item": 2,
+					"remove": false
 				}
 			]
+        },
+        {
+            "id": 2,
+            "name": "Love Letter",
+            "texture": "letter",
+            "actions": [
+                { 
+                    "type": "read",
+                    "text": "My Dearest Love..."
+                }
+            ]
         }
     ]
 }

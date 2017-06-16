@@ -1,16 +1,19 @@
 import {GameManager} from "../states/game-manager";
 import {Action, ActionResponse} from "./action"
+import {ItemManager} from "../world/items/item-manager"
+import {Item} from "./../world/items/item"
 import {ItemDrop} from "./../world/items/item-drop"
 import {Player} from "../world/actors/player"
 
 export class Pickup extends Action {
 
-	private _item: ItemDrop = null;
+	private _item: Item = null;
+	private _itemDrop: ItemDrop = null;
 	private _invId: number = null;
 	private _despawanOnUse: boolean = false;
 
 	set drop(value: ItemDrop) {
-		this._item = value;
+		this._itemDrop = value;
 	}
 
 	constructor(manager: GameManager, data: any) {
@@ -18,6 +21,7 @@ export class Pickup extends Action {
 
 		this._icon = "pickupActionIcon";
 		this._invId = data.item;
+		this._item = ItemManager.getItem(data.item);
 		this._despawanOnUse = data.remove;
 	}
 
@@ -29,11 +33,11 @@ export class Pickup extends Action {
 					reject(null);
 				}
 
-				if (this._despawanOnUse) {
-					this._item.despawn();
+				if (this._itemDrop != null && this._despawanOnUse) {
+					this._itemDrop.despawn();
 				}
 
-				player.inventory.add(this._invId);
+				player.inventory.add(this._item);
 				resolve(new ActionResponse(true));
 			}
 		);
