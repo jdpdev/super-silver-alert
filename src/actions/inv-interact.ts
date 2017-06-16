@@ -20,7 +20,7 @@ import {Player} from "../world/actors/player"
 export class InventoryInteraction extends Action {
 
 	constructor(manager: GameManager, label: string) {
-		super(manager, label);
+		super(manager, label, null);
 	}
 
 	/** Add to the user's inventory */

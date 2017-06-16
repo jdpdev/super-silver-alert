@@ -117,7 +117,9 @@ export abstract class Chunk extends WorldObject implements ILinkable {
 					dirs.up = [];
 				}
 
-				dirs.up.push(action);
+				if (!action.isRestricted()) {
+					dirs.up.push(action);
+				}
 			}
 		}
 

@@ -7,7 +7,7 @@ import {Player} from "../world/actors/player"
 export class Teleport extends Action implements IDoorAction {
 
 	constructor(manager: GameManager, label: string, protected _connection: ConnectionDef) {
-		super(manager, label);
+		super(manager, label, null);
 	}
 
 	/**
@@ -51,11 +51,5 @@ export class Teleport extends Action implements IDoorAction {
 			case "right":
 				return "teleportRightIcon";
 		}
-	}
-
-	protected loadIcon() {
-		super.loadIcon();
-
-		
 	}
 }

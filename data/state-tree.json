@@ -1,60 +1,37 @@
 {
-	"name": "test-state",
-	"default": "first",
+	"name": "my-dearest",
+	"default": "not-found",
 	"nodes": [
 		{
-			"name": "first",
+			"name": "not-found",
 			"transitions": [
 				{
-					"name": "second",
+					"name": "first-letter",
 					"requirements": [
 						{
-							"input": "first-input",
-							"value": "1"
+							"input": "found-letter",
+							"value": "Y"
 						}
 					]
 				}
 			]
 		},
 		{
-			"name": "second",
+			"name": "first-letter",
 			"transitions": [
 				{
-					"name": "third",
+					"name": "locket",
 					"requirements": [
 						{
-							"input": "second-input",
-							"value": "1"
-						}
-					]
-				},
-				{
-					"name": "fourth",
-					"requirements": [
-						{
-							"input": "second-input-skip",
-							"value": "1"
+							"input": "found-locket",
+							"value": "Y"
 						}
 					]
 				}
 			]
 		},
 		{
-			"name": "third",
-			"transitions": [
-				{
-					"name": "fourth",
-					"requirements": [
-						{
-							"input": "third-input",
-							"value": "1"
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "fourth"
+			"name": "found-locket"
 		}
 	]
 }

@@ -47,6 +47,10 @@ import {LeafDef, Leaf} from "./state-leaf";
 			return this._currentLeaf;
 		}
 
+		isInState(name: string): boolean {
+			return this._currentLeaf.name == name;
+		}
+
 		setInput(key: string, value: any) {
 			this._currentLeaf.setInput(key, value);
 		}

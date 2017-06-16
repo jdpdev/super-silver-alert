@@ -1,5 +1,9 @@
 import {GameManager} from "../../states/game-manager";
 
+export class RestrictionDef { 
+	type: string; 
+}
+
 export class RestrictionResponse {
 	constructor (private _type: any, private _isRestricted: boolean, private _notification: string) { }
 

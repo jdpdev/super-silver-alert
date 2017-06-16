@@ -1,7 +1,14 @@
 import {GameManager} from "../states/game-manager";
 import {Player} from "../world/actors/player";
-import {Restriction, RestrictionResponse} from "./components/restriction";
+import {Restriction, RestrictionResponse, RestrictionDef} from "./components/restriction";
+import {RestrictionFactory} from "./components/restriction-factory"
 import {UI} from "../ui/ui"
+
+/** Placeholder for the data loaded externally */
+export class ActionDef {
+	type: string;
+	restrictions: RestrictionDef[];
+}
 
 export class ActionResponse {
 	constructor(protected _success:boolean, protected _message:string = "") {}
@@ -41,8 +48,10 @@ export abstract class Action {
 		return this._instigator;
 	}
 
-	constructor(protected _manager:GameManager, protected _label: string) {
-
+	constructor(protected _manager:GameManager, protected _label: string, def: ActionDef) {
+		if (def != null) {
+			this.buildRestrictions(def);
+		}
 	}
 
 	setBounds(left: number = 0, right: number = 0) {
@@ -83,6 +92,10 @@ export abstract class Action {
 		this._z = value;
 	}
 
+	get isAvailable(): boolean {
+		return true;
+	}
+
 	/**
 	 * Activate the action
 	 */
@@ -91,7 +104,13 @@ export abstract class Action {
 		return null;
 	}
 
-	addRestriction(restriction: Restriction) {
+	private buildRestrictions(actionDef: ActionDef) {
+		for (var def of actionDef.restrictions) {
+			this.addRestriction(RestrictionFactory.getRestriction(def));
+		}
+	}
+
+	protected addRestriction(restriction: Restriction) {
 		if (this._restrictions == null) {
 			this._restrictions = [];
 		}
@@ -100,10 +119,10 @@ export abstract class Action {
 	}
 
 	/**
-	 * Returns if the action is restricted
-	 * @return {RestrictionResponse|boolean} 
+	 * Returns the action's current restriction
+	 * @return {RestrictionResponse} 
 	 */
-	isRestricted(): RestrictionResponse | boolean {
+	getRestriction(): RestrictionResponse {
 		if (this._restrictions) {
 			for (var i = 0; i < this._restrictions.length; i++) {
 				var response = this._restrictions[i].isRestricted(this._manager);
@@ -114,16 +133,11 @@ export abstract class Action {
 			}
 		}
 
-		return false;
+		return null;
 	}
 
-	protected loadIcon() {
-		/*this._icon = this._manager.game.add.graphics(0, 0);
-
-		this._icon.beginFill(0, 0.2);
-		this._icon.drawCircle(0, 0, Action.ICON_SIZE + 15);
-		this._icon.drawCircle(0, 0, Action.ICON_SIZE + 10);
-		this._icon.drawCircle(0, 0, Action.ICON_SIZE + 5);
-		this._icon.endFill();*/
+	isRestricted(): boolean {
+		var restriction = this.getRestriction();
+		return restriction != null && restriction.isRestricted;
 	}
 }

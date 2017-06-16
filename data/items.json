@@ -9,7 +9,14 @@
 				{
 					"type": "pickup",
 					"item": 2,
-					"remove": false
+					"remove": false,
+                    "restrictions": [
+                        {
+                            "type": "state",
+                            "tree": "my-dearest",
+                            "state": "not-found"
+                        }
+                    ]
 				}
 			]
         },

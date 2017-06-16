@@ -9,7 +9,7 @@ import {Player} from "../world/actors/player"
 export class EscapeAction extends Action implements IDoorAction {
 	
 	constructor(manager: GameManager, label: string, protected _chunk: Chunk, protected _connection: ConnectionDef) {
-		super(manager, label);
+		super(manager, label, null);
 
 		if (_connection.openTime != null && _connection.closeTime != null) {
 			this.addRestriction(new TimeRestriction(_connection.openTime, _connection.closeTime));

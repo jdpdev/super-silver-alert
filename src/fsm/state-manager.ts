@@ -1,8 +1,27 @@
 import {Tree} from "./state-tree"
 
 export class StateManager {
+	private static _instance: StateManager;
+
+	/** List of tree files to load */
 	private _cachedTrees: string[];
+
+	/** Compiled trees */
 	private _trees: Tree[];
+
+	constructor() {
+		StateManager._instance = this;
+	}
+
+	static getTree(name: string): Tree {
+		for (var tree of StateManager._instance._trees) {
+			if (tree.name == name) {
+				return tree;
+			}
+		}
+
+		return null;
+	}
 
 	loadTree(game:Phaser.Game, name:string) {
 		this._cachedTrees = [];

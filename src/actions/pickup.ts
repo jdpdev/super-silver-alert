@@ -4,6 +4,14 @@ import {ItemManager} from "../world/items/item-manager"
 import {Item} from "./../world/items/item"
 import {ItemDrop} from "./../world/items/item-drop"
 import {Player} from "../world/actors/player"
+import {ActionDef} from "./action"
+
+/** Placeholder for the data loaded externally */
+export class PickupDef extends ActionDef { 
+	type: string;
+	item: number;
+	remove: boolean;
+};
 
 export class Pickup extends Action {
 
@@ -16,8 +24,8 @@ export class Pickup extends Action {
 		this._itemDrop = value;
 	}
 
-	constructor(manager: GameManager, data: any) {
-		super(manager, "Pickup");
+	constructor(manager: GameManager, data: PickupDef) {
+		super(manager, "Pickup", data);
 
 		this._icon = "pickupActionIcon";
 		this._invId = data.item;
