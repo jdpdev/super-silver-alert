@@ -1,7 +1,14 @@
 import {GameManager} from "../states/game-manager"
 
 export abstract class WorldObject {
+	private static _lastuid: number = 0;
+
 	protected _container: Phaser.Group = null;
+	protected _uid: number = WorldObject._lastuid++;
+
+	get uid(): number {
+		return this._uid;
+	}
 
 	constructor(protected _game: Phaser.Game, protected _parent: Phaser.Group) {
 		if (this._parent != null) {

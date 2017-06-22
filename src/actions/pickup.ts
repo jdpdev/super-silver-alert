@@ -1,28 +1,25 @@
 import {GameManager} from "../states/game-manager";
-import {Action, ActionResponse} from "./action"
+import {Action, ActionResponse, ActionDef, StateInputDef} from "./action"
+import {DropAction} from "./drop-action"
 import {ItemManager} from "../world/items/item-manager"
 import {Item} from "./../world/items/item"
 import {ItemDrop} from "./../world/items/item-drop"
 import {Player} from "../world/actors/player"
-import {ActionDef} from "./action"
 
 /** Placeholder for the data loaded externally */
 export class PickupDef extends ActionDef { 
 	type: string;
 	item: number;
 	remove: boolean;
+	state: StateInputDef;
 };
 
-export class Pickup extends Action {
+export class Pickup extends DropAction {
 
 	private _item: Item = null;
-	private _itemDrop: ItemDrop = null;
 	private _invId: number = null;
 	private _despawanOnUse: boolean = false;
-
-	set drop(value: ItemDrop) {
-		this._itemDrop = value;
-	}
+	private _stateInput: StateInputDef = null;
 
 	constructor(manager: GameManager, data: PickupDef) {
 		super(manager, "Pickup", data);
@@ -31,6 +28,7 @@ export class Pickup extends Action {
 		this._invId = data.item;
 		this._item = ItemManager.getItem(data.item);
 		this._despawanOnUse = data.remove;
+		this._stateInput = data.state;
 	}
 
 	/** Add to the user's inventory */
@@ -46,8 +44,17 @@ export class Pickup extends Action {
 				}
 
 				player.inventory.add(this._item);
+				
+				if (this._stateInput != null) {
+					this.updateState(this._stateInput);
+				}
+
 				resolve(new ActionResponse(true));
 			}
 		);
+	}
+
+	isShown(): boolean {
+		return !this.isRestricted();
 	}
 }

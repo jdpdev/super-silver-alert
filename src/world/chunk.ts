@@ -117,7 +117,7 @@ export abstract class Chunk extends WorldObject implements ILinkable {
 					dirs.up = [];
 				}
 
-				if (!action.isRestricted()) {
+				if (action.isShown()) {
 					dirs.up.push(action);
 				}
 			}
@@ -190,8 +190,17 @@ export abstract class Chunk extends WorldObject implements ILinkable {
 			return;
 		}
 
-		drop.initialize(record);
+		drop.initialize(record, this);
 		this._drops.push(drop);
+	}
+
+	removeDrop(drop: ItemDrop) {
+		for (var i = 0; i < this._drops.length; i++) {
+			if (this._drops[i].uid == drop.uid) {
+				this._drops.splice(i, 1);
+				break;
+			}
+		}
 	}
 
 // ***************************************************************************************************************

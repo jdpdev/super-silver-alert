@@ -1,8 +1,10 @@
 import {WorldObject} from "../world-object"
 import {Action} from "../../actions/action"
+import {DropAction} from "../../actions/drop-action"
 import {ActionFactory} from "../../actions/action-factory"
 import {Item} from "./item"
 import {ItemManager} from "./item-manager"
+import {Chunk} from "../chunk"
 
 export class ItemDropRecord {
 	protected _id: number = null;
@@ -49,6 +51,8 @@ export class ItemDrop extends WorldObject {
 	/** @type {Item} The item description */
 	protected _item: Item = null;
 
+	protected _chunk: Chunk = null;
+
 	/** @type {number} Size of the area the item can be picked up from */
 	protected _collisionWidth: number = 0;
 
@@ -58,7 +62,7 @@ export class ItemDrop extends WorldObject {
 		return this._item;
 	}
 
-	initialize(record:ItemDropRecord) {
+	initialize(record:ItemDropRecord, chunk: Chunk) {
 		this._record = record;
 		this._item = ItemManager.getItem(record.itemId);
 		this.draw();
@@ -71,6 +75,10 @@ export class ItemDrop extends WorldObject {
 			spawned.setBounds(record.chunkOffset.x - this._item.pickupDistance, record.chunkOffset.x + record.width + this._item.pickupDistance);
 
 			this._actions.push(spawned);
+
+			if (spawned instanceof DropAction) {
+				spawned.drop = this;
+			}
 		});
 	}
 
@@ -100,6 +108,7 @@ export class ItemDrop extends WorldObject {
 	 */
 	despawn() {
 		this._container.destroy(true);
+		this._chunk.removeDrop(this);
 	}
 
 	getActions(x: number): Action[] {

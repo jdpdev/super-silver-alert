@@ -3,11 +3,18 @@ import {Player} from "../world/actors/player";
 import {Restriction, RestrictionResponse, RestrictionDef} from "./components/restriction";
 import {RestrictionFactory} from "./components/restriction-factory"
 import {UI} from "../ui/ui"
+import {StateManager} from "../fsm/state-manager"
 
 /** Placeholder for the data loaded externally */
 export class ActionDef {
 	type: string;
 	restrictions: RestrictionDef[];
+}
+
+export class StateInputDef {
+	tree: string;
+	input: string;
+	value: any;
 }
 
 export class ActionResponse {
@@ -139,5 +146,22 @@ export abstract class Action {
 	isRestricted(): boolean {
 		var restriction = this.getRestriction();
 		return restriction != null && restriction.isRestricted;
+	}
+
+	/**
+	 * Whether the action wants to be shown to the user
+	 */
+	isShown(): boolean {
+		return true;
+	}
+
+	protected updateState(input: StateInputDef) {
+		var tree = StateManager.getTree(input.tree);
+
+		if (tree == null) {
+			console.error(`State tree ${input.tree} does not exist!`);
+		}
+
+		tree.setInput(input.input, input.value);
 	}
 }

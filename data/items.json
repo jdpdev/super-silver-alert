@@ -16,7 +16,12 @@
                             "tree": "my-dearest",
                             "state": "not-found"
                         }
-                    ]
+                    ],
+                    "state": {
+                        "tree": "my-dearest",
+                        "input": "found-letter",
+                        "value": "Y"
+                    }
 				}
 			]
         },

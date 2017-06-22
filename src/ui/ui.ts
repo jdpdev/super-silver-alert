@@ -4,22 +4,37 @@ import {ChunkConnections, DirectionActions} from "../world/chunk";
 import {Action} from "../actions/action"
 import {TextureManager} from "../content/texture-manager"
 
+import {Pack} from "./pack"
+
 export class UI {
     public  static ACTION_ICON_SIZE: number = 40;
     private static ACTION_ICON_WIDTH: number = 45;
 
     private _container: Phaser.Group = null;
+    private _actionContainer: Phaser.Group = null;
+
+    private _pack: Pack;
 
     constructor(private _game: GameManager, private _pc: Player) { 
         this._container = _game.game.add.group(_game.stage);
+        this._actionContainer = _game.game.add.group(this._container);
+
+        this._pack = new Pack(_game, this);
+        this._pack.setBounds(new Phaser.Rectangle(10, 450, _game.game.stage.width - 20, _game.game.stage.height - 450));
     }
 
     get container(): Phaser.Group {
         return this._container;
     }
 
+    get player(): Player {
+        return this._pc;
+    }
+
     update(delta: number) {
-        this._container.removeChildren();
+        this._pack.update(delta);
+
+        this._actionContainer.removeChildren();
 
         var actions: ChunkConnections = this._pc.connections;
         
@@ -50,7 +65,7 @@ export class UI {
                 continue;
             }
 
-            var sprite = this._game.game.add.sprite(arcX, arcY, null, null, this._container);
+            var sprite = this._game.game.add.sprite(arcX, arcY, null, null, this._actionContainer);
             sprite.texture = icon;
 
             arcX += UI.ACTION_ICON_WIDTH;

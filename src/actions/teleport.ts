@@ -38,18 +38,24 @@ export class Teleport extends Action implements IDoorAction {
 	}
 
 	get icon(): string {
+		var disabled: string = "";
+
+		if (this.isRestricted()) {
+			disabled = "-disabled";
+		}
+
 		switch (this._direction) {
 			case "up":
-				return "teleportUpIcon";
+				return "teleportUpIcon" + disabled;
 
 			case "down":
-				return "teleportDownIcon";
+				return "teleportDownIcon" + disabled;
 
 			case "left":
-				return "teleportLeftIcon";
+				return "teleportLeftIcon" + disabled;
 
 			case "right":
-				return "teleportRightIcon";
+				return "teleportRightIcon" + disabled;
 		}
 	}
 }

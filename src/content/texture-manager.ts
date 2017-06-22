@@ -42,10 +42,17 @@ export class TextureManager {
 				return this.drawPickupActionIcon();
 
 			case "teleportUpIcon":
-				return this.drawTeleportUpActionIcon();
+				return this.drawTeleportUpActionIcon(false);
+
+			case "teleportUpIcon-disabled":
+				return this.drawTeleportUpActionIcon(true);
 
 			case "teleportDownIcon":
+			case "teleportDownIcon-disabled":
 				return this.drawTeleportDownActionIcon();
+
+			case "letter":
+				return this.drawLetter();
 			
 			default:
 				return null;
@@ -239,14 +246,14 @@ export class TextureManager {
 		return texture;
 	}
 
-	private drawTeleportUpActionIcon(): PIXI.RenderTexture {
+	private drawTeleportUpActionIcon(disabled: boolean): PIXI.RenderTexture {
 		var graphics = this._game.add.graphics(0, 0, this._game.world);
 
-		graphics.beginFill(0xffff00);
+		graphics.beginFill(disabled ? 0xbbbbbb : 0xffff00);
 		graphics.drawCircle(0, 0, 40);
 		graphics.endFill(); 
 		
-		graphics.beginFill(0x16ceff);
+		graphics.beginFill(disabled ? 0x888888 : 0x16ceff);
 		graphics.drawRect(-7, 0, 14, 15);
 		graphics.drawTriangle([new Phaser.Point(-15, 0), new Phaser.Point(15, 0), new Phaser.Point(0, -15)]);
 		graphics.endFill();
@@ -288,5 +295,24 @@ export class TextureManager {
 		var texture = graphics.generateTexture();
 		this._game.world.remove(graphics, true);
 		return texture; 
+	}
+
+	private drawLetter(): PIXI.RenderTexture {
+		var graphics = this._game.add.graphics(0, 0, this._game.world);
+
+		graphics.beginFill(0xf5f5dc);
+		graphics.drawPolygon(
+			[
+				new Phaser.Point(5, 0),
+				new Phaser.Point(38, 5),
+				new Phaser.Point(33, 38),
+				new Phaser.Point(0, 33)
+			]
+		);
+		graphics.endFill();
+
+		var texture = graphics.generateTexture();
+		this._game.world.remove(graphics, true);
+		return texture;
 	}
 }
